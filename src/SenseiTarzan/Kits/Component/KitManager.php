@@ -143,8 +143,7 @@ class KitManager
         }
         $player->getInventory()->addItem(...$kit->getItems());
         $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_open_kit($kit->getName())));
-
-        return false;
+        return true;
     }
 
 }

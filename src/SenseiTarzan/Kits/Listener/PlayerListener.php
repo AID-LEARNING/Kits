@@ -43,6 +43,7 @@ class PlayerListener
                     if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
                         $player->getInventory()->removeItem($item->setCount(1));
                         $event->cancel();
+
                     }
                 }
             }
