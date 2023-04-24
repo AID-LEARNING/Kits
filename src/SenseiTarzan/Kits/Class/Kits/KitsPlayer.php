@@ -5,6 +5,7 @@ namespace SenseiTarzan\Kits\Class\Kits;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use SenseiTarzan\DataBase\Component\DataManager;
+use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Utils\Convertor;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
@@ -58,8 +59,10 @@ class KitsPlayer implements \JsonSerializable
 
     public function addWaitingPeriod(string $kit, float $second): void
     {
-        $this->listWaitingPeriod[$kit] = new WaitingPeriod($kit, time() + $second);
-        DataManager::getInstance()->getDataSystem()->updateOnline($this->getId(), "addWaitingPeriod", $this->listWaitingPeriod[$kit]);
+        $kit = KitManager::getInstance()->getKit($kit);
+        if ($kit === null) return;
+        $this->listWaitingPeriod[$kit->getId()] = new WaitingPeriod($kit->getId(), time() + $second);
+        DataManager::getInstance()->getDataSystem()->updateOnline($this->getId(), "addWaitingPeriod", $this->listWaitingPeriod[$kit->getId()]);
         $this->getPlayer()?->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($this->getPlayer(), CustomKnownTranslationFactory::add_waiting_period($kit->getName(), $kit->getDelay())));
 
     }
