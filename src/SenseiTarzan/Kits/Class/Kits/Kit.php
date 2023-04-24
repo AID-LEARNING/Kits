@@ -32,6 +32,14 @@ class Kit
      */
     public function __construct(private string $name, private IconForm $iconForm, private ?string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
     {
+        if ($this->descriptionPath !== null) {
+            foreach (LanguageManager::getInstance()->getAllLang() as $language) {
+                $config = $language->getConfig();
+                if ($config->getNested($this->descriptionPath) !== null) continue;
+                $config->setNested($this->descriptionPath, $this->description);
+                $config->save();
+            }
+        }
         KitListArgument::$VALUES[$this->getId()] = $name;
         if (PermissionManager::getInstance()->getPermission($this->permission) === null) {
             PermissionManager::getInstance()->addPermission(new Permission($this->permission, "$name kit permission"));
