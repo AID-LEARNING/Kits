@@ -17,7 +17,7 @@ class Convertor
     public static function jsonToWaitingPeriod(array $json): array
     {
         foreach ($json as $name => $period) {
-            $json[$name] = new WaitingPeriod($name, $period);
+            $json[$name] = new WaitingPeriod($name, floatval($period));
         }
         return $json;
     }
