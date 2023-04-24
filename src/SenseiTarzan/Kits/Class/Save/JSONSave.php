@@ -54,10 +54,10 @@ class JSONSave implements IDataSave
 
         if ($type === "addWaitingPeriod") {
             if (!$data instanceof WaitingPeriod) return;
-            $type = "listWaitingPeriod." . strtolower($data->getName());
+            $type = strtolower($data->getName());
             $data = $data->getPeriod();
         } elseif ($type === "removeWaitingPeriod") {
-            $type = "listWaitingPeriod." . strtolower($data);
+            $type = strtolower($data);
             $this->config->removeNested($id . ".$type");
             $this->config->save();
             return;
