@@ -1,0 +1,14 @@
+name: kits
+main: SenseiTarzan\Kits\Main
+version: 1.0.0
+api: 4.0.0
+authors:
+  - SenseiTarzan
+description: "Kits plugin for PocketMine-MP"
+permissions:
+  kits.command.kit.removeWaitingPeriod:
+    default: op
+    description: "Remove waiting period for kit"
+  kits.command.kit:
+    default: op
+    description: "Kits command"
