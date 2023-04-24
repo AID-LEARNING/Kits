@@ -19,7 +19,7 @@ class KitCommand extends BaseCommand
     {
         $this->setPermission($this->getPermission());
         $this->addConstraint(new InGameRequiredConstraint($this));
-        $this->registerSubCommand(new RemoveWaitingPeriodSubCommand($this->plugin, "removeWaitingPeriod", "Remove waiting period of a kit", ["delWaitingPeriod", "removeWaiting", "delWaiting"]));
+        $this->registerSubCommand(new RemoveWaitingPeriodSubCommand($this->plugin, "rmwaitingperiod", "Remove waiting period of a kit", ["delwaitingperiod", "rmwaiting", "delwaiting"]));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void

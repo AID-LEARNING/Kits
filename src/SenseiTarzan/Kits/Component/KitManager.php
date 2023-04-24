@@ -63,6 +63,9 @@ class KitManager
     {
         $ui = new SimpleForm(function (Player $player, ?string $index) : void{
 
+            $kit = $this->getKit($index);
+            if ($kit === null) return;
+            $this->UIKitRecovery($player, $kit);
         });
         foreach ($this->getKits() as $kit){
             if (!$kit->hasPermission($player)) continue;
