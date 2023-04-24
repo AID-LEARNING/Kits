@@ -2,7 +2,7 @@
 
 namespace SenseiTarzan\Kits\Class\Kits;
 
-use pocketmine\block\BlockTypeIds;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\command\CommandSender;
 use pocketmine\item\Item;
 use pocketmine\permission\DefaultPermissions;
@@ -115,9 +115,9 @@ class Kit
         $inv = $player->getInventory();
         $n = 0;
 
-        $airId = -BlockTypeIds::AIR;
+        $airId = BlockLegacyIds::AIR;
         for ($i = 0; $i < $inv->getSize(); ++$i) {
-            if ($inv->getItem($i)->getTypeId() !== $airId) {
+            if ($inv->getItem($i)->getId() !== $airId) {
                 $n++;
             }
         }
