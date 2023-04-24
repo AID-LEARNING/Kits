@@ -4,13 +4,12 @@ namespace SenseiTarzan\Kits\Class\Kits;
 
 use pocketmine\block\BlockTypeIds;
 use pocketmine\item\Item;
-use pocketmine\item\ItemTypeIds;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\player\Player;
 use SenseiTarzan\IconUtils\IconForm;
-use SenseiTarzan\Kits\Commands\type\KitListArgument;
+use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Utils\Convertor;
 
 class Kit
@@ -34,7 +33,7 @@ class Kit
         KitListArgument::$VALUES[$this->getId()] = $name;
         if (PermissionManager::getInstance()->getPermission($this->permission) === null) {
             PermissionManager::getInstance()->addPermission(new Permission($this->permission, "$name kit permission"));
-            ermissionManager::getInstance()->getPermission(DefaultPermissions::ROOT_OPERATOR)->addChild($this->permission, true);
+            PermissionManager::getInstance()->getPermission(DefaultPermissions::ROOT_OPERATOR)->addChild($this->permission, true);
 
         }
         $this->items = Convertor::jsonToItems($items);

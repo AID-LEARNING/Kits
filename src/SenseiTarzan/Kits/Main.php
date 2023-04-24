@@ -12,6 +12,7 @@ use SenseiTarzan\Kits\Commands\KitCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Listener\PlayerListener;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
+use SenseiTarzan\Path\PathScanner;
 use Symfony\Component\Filesystem\Path;
 
 class Main extends PluginBase
@@ -20,7 +21,9 @@ class Main extends PluginBase
     protected function onLoad(): void
     {
         if (!file_exists(Path::join($this->getDataFolder(), "config.yml"))) {
-            $this->saveResource("config.yml");
+            foreach (PathScanner::scanDirectoryGenerator($search =  Path::join(dirname(__DIR__,3) , "resources")) as $file){
+                @$this->saveResource(str_replace($search, "", $file));
+            }
         }
         $typeSave = $this->getConfig()->get("type-save");
         match ($typeSave) {
