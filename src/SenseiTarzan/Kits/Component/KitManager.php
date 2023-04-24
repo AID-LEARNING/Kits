@@ -27,6 +27,7 @@ class KitManager
 
     public function __construct(public Main $plugin)
     {
+        self::setInstance($this);
         $this->config = $this->plugin->getConfig();
         $this->loadKits();
     }
