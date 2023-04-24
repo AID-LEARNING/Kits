@@ -79,7 +79,7 @@ class KitsPlayer implements \JsonSerializable
 
     public function canRetrieveKit(string $kit): bool
     {
-        return $this->hasWaitingPeriod($kit) || $this->getWaitingPeriod($kit)->isCompleted();
+        return (!$this->hasWaitingPeriod($kit)) || ($this->getWaitingPeriod($kit)?->isCompleted() ?? true);
     }
 
     public function getListWaitingPeriodToJSON(): array
