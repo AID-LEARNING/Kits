@@ -39,8 +39,8 @@ class JSONSave implements IDataSave
             $this->config->save();
             return;
         }
-        $listWaitingPeriod = $this->config->getNested($name . ".listWaitingPeriod", []);
-        KitsPlayerManager::getInstance()->loadPlayer(KitsPlayer::create($name, Convertor::jsonToWaitingPeriod($listWaitingPeriod)));
+        $data = $this->config->get($name);
+        KitsPlayerManager::getInstance()->loadPlayer(KitsPlayer::create($name, Convertor::jsonToWaitingPeriod($data["listWaitingPeriod"] ?? [])));
     }
 
     /**
