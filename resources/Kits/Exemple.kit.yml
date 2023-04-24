@@ -1,6 +1,8 @@
 name: Exemple
 image: "textures/items/apple"
-description: "Exemple kit \n1xStone\n2xUpdate block"
+description:
+  key: "Kit.description.Exemple"
+  default: "Exemple kit \n1xStone\n2xUpdate block"
 permission: "Exemple.kit.permission"
 delay: 60 # delay is in seconds
 items:

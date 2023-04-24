@@ -35,7 +35,7 @@ class KitManager
     public function loadKits(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $this->kits[strtolower($name = $config->get('name'))] = Kit::create($name, $config->get("image"), $config->get("description"), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
+            $this->kits[strtolower($name = $config->get('name'))] = Kit::create($name, $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
         }
     }
 
@@ -119,7 +119,7 @@ class KitManager
         });
 
         $ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_information($kit->getName())));
-        $ui->setContent("§r§7{$kit->getDescription()}");
+        $ui->setContent($kit->getDescription($player));
         $ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
         $ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
         $player->sendForm($ui);
