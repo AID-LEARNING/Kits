@@ -30,7 +30,7 @@ class KitCommand extends BaseCommand
         KitManager::getInstance()->UIindex($sender);
     }
 
-    public function getPermission()
+    public function getPermission(): string
     {
         return "kits.command.kit";
     }
