@@ -8,6 +8,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\item\ItemBlock;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\Kits\Class\Kits\Kit;
@@ -33,10 +34,29 @@ class PlayerListener
     #[EventAttribute(EventPriority::LOWEST)]
     public function onClick(PlayerInteractEvent $event): void
     {
+        if ($event->isCancelled()) return;
         if ($event->getAction() === PlayerInteractEvent::LEFT_CLICK_BLOCK || $event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
             $player = $event->getPlayer();
             $item = $event->getItem();
-            if ($item->getTypeId() === -BlockTypeIds::CHEST) {
+            if ($item instanceof ItemBlock) {
+                if ($item->getBlock()->getTypeId() === BlockTypeIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
+                    if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
+                        $player->getInventory()->removeItem($item->setCount(1));
+                        $event->cancel();
+                    }
+                }
+            }
+        }
+    }
+
+    #[EventAttribute(EventPriority::LOWEST)]
+    public function onUse(PlayerItemUseEvent $event): void
+    {
+        if ($event->isCancelled()) return;
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+        if ($item instanceof ItemBlock) {
+            if ($item->getBlock()->getTypeId() === BlockTypeIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
                 if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
                     $player->getInventory()->removeItem($item->setCount(1));
                     $event->cancel();
@@ -44,18 +64,4 @@ class PlayerListener
             }
         }
     }
-
-    #[EventAttribute(EventPriority::LOWEST)]
-    public function onUseItem(PlayerItemUseEvent $event): void
-    {
-        $player = $event->getPlayer();
-        $item = $event->getItem();
-        if ($item->getTypeId() === -BlockTypeIds::CHEST) {
-            if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
-                $player->getInventory()->removeItem($item->setCount(1));
-                $event->cancel();
-            }
-        }
-    }
-
 }
