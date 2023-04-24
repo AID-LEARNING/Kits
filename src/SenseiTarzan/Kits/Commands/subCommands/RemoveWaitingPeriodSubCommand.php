@@ -19,7 +19,7 @@ class RemoveWaitingPeriodSubCommand extends BaseSubCommand
     protected function prepare(): void
     {
         $this->setPermission($this->getPermission());
-        $this->registerArgument(0, new TargetPlayerArgument(false));
+        $this->registerArgument(0, new TargetPlayerArgument(false, "player"));
         $this->registerArgument(1, new KitListArgument("kit", false));
     }
 
