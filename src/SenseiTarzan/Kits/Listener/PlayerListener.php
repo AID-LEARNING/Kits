@@ -38,7 +38,7 @@ class PlayerListener
             $item = $event->getItem();
             if ($item->getTypeId() === -BlockTypeIds::CHEST) {
                 if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
-                    $player->getInventory()->removeItem($item);
+                    $player->getInventory()->removeItem($item->setCount(1));
                     $event->cancel();
                 }
             }
@@ -52,7 +52,7 @@ class PlayerListener
         $item = $event->getItem();
         if ($item->getTypeId() === -BlockTypeIds::CHEST) {
             if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
-                $player->getInventory()->removeItem($item);
+                $player->getInventory()->removeItem($item->setCount(1));
                 $event->cancel();
             }
         }
