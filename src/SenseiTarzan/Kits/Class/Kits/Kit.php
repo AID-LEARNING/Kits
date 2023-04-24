@@ -74,7 +74,6 @@ class Kit
      */
     public function getDescription(CommandSender|string|null $player = null): string
     {
-        var_dump($this->descriptionPath, LanguageManager::getInstance()->getLanguage("fra")->getConfig()->getNested($this->descriptionPath));
         return $player === null ? $this->description : ($this->descriptionPath !== null ? LanguageManager::getInstance()->getTranslate($player, $this->descriptionPath, [], $this->description) : $this->description);
     }
 
