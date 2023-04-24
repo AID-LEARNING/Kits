@@ -59,8 +59,31 @@ class CustomKnownTranslationFactory
         return new Translatable(CustomKnownTranslationKeys::SUCCESS_OPEN_KIT, ['kitName' => $kitName]);
     }
 
+    public static function success_add_waiting_period(string $kitName): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::SUCCESS_ADD_WAITING_PERIOD, ['kitName' => $kitName]);
+    }
+
     public static function error_not_found_waiting_period(mixed $player, mixed $kit): Translatable
     {
         return new Translatable(CustomKnownTranslationKeys::ERROR_NOT_FOUND_WAITING_PERIOD, ['player' => $player instanceof Player ? $player->getName() : $player, 'kit' => $kit instanceof Kit ? $kit->getName() : $kit]);
+    }
+
+    public static function accepted_button(): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::ACCEPTED_BUTTON);
+    }
+
+    public static function cancel_button(): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::CANCEL_BUTTON);
+    }
+    public static function title_kit_index(): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::TITLE_KIT_INDEX);
+    }
+    public static function title_kit_information(string $name): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::TITLE_KIT_INFORMATION, ['name' => $name]);
     }
 }

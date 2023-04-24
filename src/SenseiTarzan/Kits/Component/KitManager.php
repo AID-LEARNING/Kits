@@ -62,11 +62,13 @@ class KitManager
     public function UIindex(Player $player): void
     {
         $ui = new SimpleForm(function (Player $player, ?string $index) : void{
-
+            if ($index === null) return;
             $kit = $this->getKit($index);
             if ($kit === null) return;
             $this->UIKitRecovery($player, $kit);
         });
+        $ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
+
         foreach ($this->getKits() as $kit){
             if (!$kit->hasPermission($player)) continue;
             $ui->addButton($kit->getName(), $kit->getIconForm()->getType(), $kit->getIconForm()->getPath(), $kit->getId());
@@ -76,43 +78,51 @@ class KitManager
 
     public function UIKitRecovery(Player $player, Kit $kit): void
     {
-        $ui = new SimpleForm(function (Player $player, ?int $index) use($kit): void{
-           if ($index === 1){
-               $target = KitsPlayerManager::getInstance()->getPlayer($player);
-               if (!$kit->hasPermission($player)){
+        $ui = new SimpleForm(function (Player $player, ?int $index) use ($kit): void {
+            if ($index === 0) {
+                $target = KitsPlayerManager::getInstance()->getPlayer($player);
+                if (!$kit->hasPermission($player)) {
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_have_permissions()));
                     return;
-               }
+                }
 
-               $hasDelay = $kit->getDelay() > 0;
-               if ($hasDelay) {
-                   if (!$target->canRetrieveKit($kit->getId())) {
-                       $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
-                       return;
-                   } else {
-                       $target->removeWaitingPeriod($kit->getId());
-                   }
-               }
-               $chest = VanillaBlocks::CHEST()->asItem()
-                ->setCustomName("§r§l§e{$kit->getName()}§r§f§l§e Kit")
-                ->setLore([
-                    "§r§7Click to get the kit",
-                    "§r§7You can get it every " . LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_format_time($kit->getDelay()))
-                ]);
+                $hasDelay = $kit->getDelay() > 0;
+                if ($hasDelay) {
+                    if (!$target->canRetrieveKit($kit->getId())) {
+                        $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
+                        return;
+                    } else {
+                        $target->removeWaitingPeriod($kit->getId());
+                    }
+                }
+                $chest = VanillaBlocks::CHEST()->asItem()
+                    ->setCustomName("§r§l§e{$kit->getName()}§r§f§l§e Kit")
+                    ->setLore([
+                        "§r§7Click to get the kit",
+                        "§r§7You can get it every " . LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_format_time($kit->getDelay()))
+                    ]);
                 $chest->getNamedTag()->setString("kit", $kit->getId());
 
-               if (!$player->getInventory()->canAddItem($chest)){
-                   $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
-                   return;
-               }
-               if ($hasDelay) {
-                   KitsPlayerManager::getInstance()->getPlayer($player)->addWaitingPeriod($kit->getId(), $kit->getDelay());
-               }
-               $player->getInventory()->addItem($chest);
-               $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_get_kit($kit->getName())));
+                if (!$player->getInventory()->canAddItem($chest)) {
+                    $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
+                    return;
+                }
+                if ($hasDelay) {
+                    KitsPlayerManager::getInstance()->getPlayer($player)->addWaitingPeriod($kit->getId(), $kit->getDelay());
+                }
+                $player->getInventory()->addItem($chest);
+                $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_get_kit($kit->getName())));
 
-           }
+            }else{
+                $this->UIindex($player);
+            }
         });
+
+        $ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_information($kit->getName())));
+        $ui->setContent("§r§7{$kit->getDescription()}");
+        $ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
+        $ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
+        $player->sendForm($ui);
     }
 
     public function giveKitToPlayer(Player $player, string $kitName): bool{

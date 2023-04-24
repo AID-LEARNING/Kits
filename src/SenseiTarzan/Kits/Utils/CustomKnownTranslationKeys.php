@@ -21,4 +21,10 @@ class CustomKnownTranslationKeys
     const SUCCESS_ADD_WAITING_PERIOD = "WaitingPeriod.success";
     const ERROR_NOT_FOUND_WAITING_PERIOD = "WaitingPeriod.errorNotFound";
 
+    const ACCEPTED_BUTTON = "Button.accepted";
+    const CANCEL_BUTTON = "Button.cancel";
+
+    const TITLE_KIT_INDEX = "Kit.title.index";
+
+    const TITLE_KIT_INFORMATION = "Kit.title.information";
 }
