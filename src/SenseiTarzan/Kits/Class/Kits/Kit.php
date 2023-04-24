@@ -29,9 +29,8 @@ class Kit
      * @param float $delay
      * @param array $items
      */
-    public function __construct(private string $name, private IconForm $iconForm, private string $permission, private float $delay, array $items)
+    public function __construct(private string $name, private IconForm $iconForm, private string $description, private string $permission, private float $delay, array $items)
     {
-
         KitListArgument::$VALUES[$this->getId()] = $name;
         if (PermissionManager::getInstance()->getPermission($this->permission) === null) {
             PermissionManager::getInstance()->addPermission(new Permission($this->permission, "$name kit permission"));
@@ -41,9 +40,9 @@ class Kit
         $this->items = Convertor::jsonToItems($items);
     }
 
-    public static function create(string $name, string $image, string $permission, float $delay,  array $items): Kit
+    public static function create(string $name, string $image,  string $description, string $permission, float $delay,  array $items): Kit
     {
-        return new self($name, IconForm::create($image), $permission, $delay, $items);
+        return new self($name, IconForm::create($image),$description, $permission, $delay, $items);
     }
 
 
@@ -58,6 +57,14 @@ class Kit
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     /**

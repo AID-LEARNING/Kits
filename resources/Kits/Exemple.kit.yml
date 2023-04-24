@@ -1,0 +1,20 @@
+name: Exemple
+image: "textures/items/apple"
+description: "Exemple kit \n1xStone\n2xUpdate block"
+permission: "Exemple.kit.permission"
+delay: 60 # delay is in seconds
+items:
+  - id: 1
+    damage: 0
+    count: 1
+    customName: "§l§aExemple"
+    enchant:
+      0: 1
+  - id: 20000 # this item not work get update block
+    damage: 0
+    count: 2
+    customName: "§l§aExemple 2" # not work because is update block
+    enchant:
+      0: 1
+
+

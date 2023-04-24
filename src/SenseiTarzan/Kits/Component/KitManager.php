@@ -34,7 +34,7 @@ class KitManager
     public function loadKits(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $this->kits[strtolower($name = $config->get('name'))] = Kit::create($name, $config->get("image"), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
+            $this->kits[strtolower($name = $config->get('name'))] = Kit::create($name, $config->get("image"), $config->get("description"), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
         }
     }
 
@@ -79,15 +79,19 @@ class KitManager
                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_have_permissions()));
                     return;
                }
-                if (!$target->canRetrieveKit($kit->getId())){
-                     $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
-                     return;
-                }else{
-                    $target->removeWaitingPeriod($kit->getId());
-                }
-               $chest = VanillaBlocks::CHEST()->asItem();
-                $chest->setCustomName("§r§l§e{$kit->getName()}§r§f§l§e Kit");
-                $chest->setLore([
+
+               $hasDelay = $kit->getDelay() > 0;
+               if ($hasDelay) {
+                   if (!$target->canRetrieveKit($kit->getId())) {
+                       $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
+                       return;
+                   } else {
+                       $target->removeWaitingPeriod($kit->getId());
+                   }
+               }
+               $chest = VanillaBlocks::CHEST()->asItem()
+                ->setCustomName("§r§l§e{$kit->getName()}§r§f§l§e Kit")
+                ->setLore([
                     "§r§7Click to get the kit",
                     "§r§7You can get it every " . LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_format_time($kit->getDelay()))
                 ]);
@@ -97,7 +101,9 @@ class KitManager
                    $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
                    return;
                }
-               KitsPlayerManager::getInstance()->getPlayer($player)->addWaitingPeriod($kit->getId(), $kit->getDelay());
+               if ($hasDelay) {
+                   KitsPlayerManager::getInstance()->getPlayer($player)->addWaitingPeriod($kit->getId(), $kit->getDelay());
+               }
                $player->getInventory()->addItem($chest);
                $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_get_kit($kit->getName())));
 
