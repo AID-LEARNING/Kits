@@ -3,10 +3,9 @@
 namespace SenseiTarzan\Kits\Commands\subCommands;
 
 use CortexPE\Commando\args\TargetPlayerArgument;
-use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
-use SenseiTarzan\Kits\Commands\type\KitListArgument;
+use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Component\KitsPlayerManager;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;

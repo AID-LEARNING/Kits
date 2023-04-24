@@ -1,6 +1,6 @@
 <?php
 
-namespace SenseiTarzan\Kits\Commands\type;
+namespace SenseiTarzan\Kits\Commands\args;
 
 use CortexPE\Commando\args\StringEnumArgument;
 use pocketmine\command\CommandSender;
