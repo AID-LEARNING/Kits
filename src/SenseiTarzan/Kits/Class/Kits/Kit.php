@@ -110,20 +110,21 @@ class Kit
         return $this->items;
     }
 
+    /**
+     * @param Player $player
+     * @return bool
+     */
     public function hasFreePlace(Player $player): bool
     {
         $inv = $player->getInventory();
-        $n = 0;
 
-        $airId = BlockLegacyIds::AIR;
-        for ($i = 0; $i < $inv->getSize(); ++$i) {
-            if ($inv->getItem($i)->getId() !== $airId) {
-                $n++;
+        foreach ($this->getItems() as $item) {
+            if (!$inv->canAddItem($item)) {
+                return false;
             }
         }
 
-
-        return $inv->getSize() - $n >= 1;
+        return true;
     }
 
     public function hasPermission(Player $player): bool
