@@ -96,6 +96,6 @@ class KitsPlayer implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return ["listWaitingPeriod" => $this->getListWaitingPeriodToJSON()];
+        return $this->getListWaitingPeriodToJSON();
     }
 }
