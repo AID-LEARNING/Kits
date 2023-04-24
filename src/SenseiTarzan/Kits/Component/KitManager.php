@@ -96,11 +96,7 @@ class KitManager
                     }
                 }
                 $chest = VanillaBlocks::CHEST()->asItem()
-                    ->setCustomName("§r§l§e{$kit->getName()}§r§f§l§e Kit")
-                    ->setLore([
-                        "§r§7Click to get the kit",
-                        "§r§7You can get it every " . LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_format_time($kit->getDelay()))
-                    ]);
+                    ->setCustomName("{$kit->getName()} Kit");
                 $chest->getNamedTag()->setString("kit", $kit->getId());
 
                 if (!$player->getInventory()->canAddItem($chest)) {
