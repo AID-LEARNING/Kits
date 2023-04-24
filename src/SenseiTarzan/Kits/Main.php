@@ -25,13 +25,13 @@ class Main extends PluginBase
                 @$this->saveResource(str_replace($search, "", $file));
             }
         }
+        new LanguageManager($this);
         $typeSave = $this->getConfig()->get("type-save");
         match ($typeSave) {
             "yaml" => DataManager::getInstance()->setDataSystem(new YAMLSave($this->getDataFolder())),
             "json" => DataManager::getInstance()->setDataSystem(new JSONSave($this->getDataFolder()))
         };
         new KitManager($this);
-        new LanguageManager($this);
     }
 
     protected function onEnable(): void
