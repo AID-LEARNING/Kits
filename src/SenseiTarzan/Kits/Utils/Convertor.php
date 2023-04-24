@@ -25,12 +25,12 @@ class Convertor
     public static function jsonToItem(array $info): Item
     {
         try {
-            $item = Item::legacyJsonDeserialize($info);
+            $item = Item::jsonDeserialize($info);
 
             if (isset($info['customName'])) {
                 $item->setCustomName($info['customName']);
             }
-        } catch (SavedDataLoadingException $exception) {
+        } catch (SavedDataLoadingException) {
             $item = VanillaBlocks::INFO_UPDATE()->asItem()->setCustomName(TextFormat::DARK_RED . TextFormat::BOLD . "Error Item " . $info['id'] . ":" . ($info["damage"] ?? 0) . TextFormat::RESET . TextFormat::RED . " not found");
         }
 
