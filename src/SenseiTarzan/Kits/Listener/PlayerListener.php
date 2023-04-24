@@ -3,7 +3,6 @@
 namespace SenseiTarzan\Kits\Listener;
 
 use pocketmine\block\BlockLegacyIds;
-use pocketmine\block\BlockTypeIds;
 use pocketmine\event\EventPriority;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
