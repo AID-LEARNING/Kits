@@ -38,7 +38,8 @@ class YAMLSave implements IDataSave
             return;
         }
         $data = $this->config->get($name);
-        KitsPlayerManager::getInstance()->loadPlayer(KitsPlayer::create($name, Convertor::jsonToWaitingPeriod($data["listWaitingPeriod"] ?? [])));
+        KitsPlayerManager::getInstance()->loadPlayer(KitsPlayer::create($name, $data["listWaitingPeriod"] ?? []));
+        unset($data);
     }
 
 
