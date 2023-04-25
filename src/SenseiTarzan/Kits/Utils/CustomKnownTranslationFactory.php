@@ -41,12 +41,12 @@ class CustomKnownTranslationFactory
 
     public static function get_waiting_period(string $nameKit, float $period): Translatable
     {
-        return new Translatable(CustomKnownTranslationKeys::GET_WAITING_PERIOD, ['kitName' => $nameKit, 'period' => self::get_format_time(Convertor::remainingTime($period))]);
+        return new Translatable(CustomKnownTranslationKeys::GET_WAITING_PERIOD, ['kitName' => $nameKit, 'period' => self::get_format_time(Format::remainingTime($period))]);
     }
 
     public static function get_format_time(float $period): Translatable
     {
-        return new Translatable(CustomKnownTranslationKeys::GET_FORMAT_TIME, Convertor::formatTime($period));
+        return new Translatable(CustomKnownTranslationKeys::GET_FORMAT_TIME, Format::formatTime($period));
     }
 
     public static function success_get_kit(string $kitName): Translatable

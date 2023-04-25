@@ -35,7 +35,8 @@ class KitManager
     public function loadKits(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $this->kits[strtolower($name = $config->get('name'))] = Kit::create($name, $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
+            $kit = Kit::create($config->get('name'), $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
+            $this->kits[$kit->getId()] = $kit;
         }
     }
 
