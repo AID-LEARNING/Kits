@@ -57,14 +57,4 @@ class Convertor
         }
         return $result;
     }
-
-    public static function format_time(float $time): array
-    {
-        return [
-            'days' => floor($time / 86400),
-            'hours' => floor($time / 3600) % 24,
-            'minutes' => floor(($time / 60) % 60),
-            'seconds' => $time % 60
-        ];
-    }
 }

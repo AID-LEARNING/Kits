@@ -12,12 +12,15 @@ use pocketmine\player\Player;
 use SenseiTarzan\IconUtils\IconForm;
 use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Utils\Convertor;
+use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class Kit
 {
 
     const DEFAULT_STRING_TAG = "2aa38484-6e72-4e91-943f-838905a7a995";
+
+    private string $id;
     /**
      * @var Item[]
      */
@@ -32,6 +35,7 @@ class Kit
      */
     public function __construct(private string $name, private IconForm $iconForm, private ?string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
     {
+        $this->id = Format::nameToId($name);
         if ($this->descriptionPath !== null) {
             foreach (LanguageManager::getInstance()->getAllLang() as $language) {
                 $config = $language->getConfig();
@@ -57,7 +61,7 @@ class Kit
 
     public function getId(): string
     {
-        return strtolower($this->getName());
+        return $this->id;
     }
 
     /**
