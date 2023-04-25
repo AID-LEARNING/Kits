@@ -10,7 +10,7 @@ items:
     damage: 0
     count: 1
     customName: "§l§aExemple"
-    enchant:
+    enchant: ## id: level
       0: 1
   - id: 20000 # this item not work get update block
     damage: 0
