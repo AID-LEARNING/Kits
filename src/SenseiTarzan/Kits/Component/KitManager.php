@@ -9,6 +9,7 @@ use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Main;
+use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Path\PathScanner;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
@@ -59,7 +60,7 @@ class KitManager
      */
     public function getKit(string $name): ?Kit
     {
-        return $this->kits[strtolower($name)] ?? null;
+        return $this->kits[Format::nameToId($name)] ?? null;
     }
 
     public function existKit(string $name): bool
