@@ -4,7 +4,6 @@ namespace SenseiTarzan\Kits\Component;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\item\VanillaItems;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
@@ -29,20 +28,34 @@ class KitManager
     {
         self::setInstance($this);
         $this->config = $this->plugin->getConfig();
-        $this->loadKits();
+        $this->load();
     }
 
-    public function loadKits(): void
+    /**
+     * @return void
+     */
+    public function load(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $kit = Kit::create($config->get('name'), $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"), floatval($config->get("delay", -1)), $config->get("items"));
+            $kit = Kit::create($config->get('name'), $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default"), $config->get("permission"), floatval($config->get("delay", -1)), $config->get("items"));
             $this->kits[$kit->getId()] = $kit;
         }
     }
 
     /**
+     * Allows to update the kit but also to be sure that all items have been found
+     * @return void
+     */
+    public function reload(): void
+    {
+        unset($this->kits);
+        $this->kits = [];
+        $this->load();
+    }
+
+    /**
      * @param string $name
-     * @return Kit
+     * @return Kit|null
      */
     public function getKit(string $name): ?Kit
     {
