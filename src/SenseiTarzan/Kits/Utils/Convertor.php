@@ -58,7 +58,11 @@ class Convertor
         return $result;
     }
 
-    public static function format_time(float $time): array
+    public static function remainingTime(float $time): float{
+        return $time - time();
+    }
+
+    public static function formatTime(float $time): array
     {
         return [
             'days' => floor($time / 86400),
