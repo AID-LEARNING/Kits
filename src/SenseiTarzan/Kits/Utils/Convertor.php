@@ -2,13 +2,25 @@
 
 namespace SenseiTarzan\Kits\Utils;
 
+use Exception;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\EnchantmentIdMap;
+use pocketmine\data\bedrock\item\ItemTypeDeserializeException;
+use pocketmine\data\bedrock\item\SavedItemData;
+use pocketmine\data\bedrock\item\UnsupportedItemTypeException;
+use pocketmine\data\bedrock\item\upgrade\R12ItemIdToBlockIdMap;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\nbt\LittleEndianNbtSerializer;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
+use pocketmine\network\mcpe\convert\InvalidItemStateException;
+use pocketmine\network\mcpe\convert\UnsupportedItemException;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
+use pocketmine\world\format\io\GlobalItemDataHandlers;
 use SenseiTarzan\Kits\Class\Kits\WaitingPeriod;
 
 class Convertor
@@ -24,15 +36,26 @@ class Convertor
 
     public static function jsonToItem(array $info): Item
     {
-        try {
-            $item = Item::legacyJsonDeserialize($info);
-
-            if (isset($info['customName'])) {
-                $item->setCustomName($info['customName']);
+        if (is_numeric($info['id'])) {
+            try {
+                $item = Item::legacyJsonDeserialize($info);
+                if (isset($info['customName'])) {
+                    $item->setCustomName($info['customName']);
+                }
+            } catch (Exception) {
+                $item = clone VanillaBlocks::INFO_UPDATE()->asItem()->setCustomName(TextFormat::DARK_RED . TextFormat::BOLD . "Error Item " . $info['id'] . ":" . ($info["damage"] ?? 0) . TextFormat::RESET . TextFormat::RED . " not found");
             }
-        } catch (SavedDataLoadingException $exception) {
-            $item = VanillaBlocks::INFO_UPDATE()->asItem()->setCustomName(TextFormat::DARK_RED . TextFormat::BOLD . "Error Item " . $info['id'] . ":" . ($info["damage"] ?? 0) . TextFormat::RESET . TextFormat::RED . " not found");
+        } else {
+            try {
+                $item = self::upgradeItemJSON($info);
+                if (isset($info['customName'])) {
+                    $item->setCustomName($info['customName']);
+                }
+            } catch (Exception) {
+                $item = clone VanillaBlocks::INFO_UPDATE()->asItem()->setCustomName(TextFormat::DARK_RED . TextFormat::BOLD . "Error Item " . $info['id'] . ":" . ($info["damage"] ?? 0) . TextFormat::RESET . TextFormat::RED . " not found");
+            }
         }
+
 
         if (isset($info['enchant'])) {
             foreach ($info['enchant'] as $id => $lvl) {
@@ -57,5 +80,56 @@ class Convertor
         }
         return $result;
     }
+
+    /**
+     * @param Item[] $getItems
+     * @return array
+     */
+    public static function itemsToJson(array $getItems): array
+    {
+        $result = [];
+        foreach ($getItems as $item) {
+            $result[] = self::itemToJson($item);
+        }
+        return $result;
+    }
+
+    /**
+     * @param Item $item
+     * @return array
+     */
+    private static function itemToJson(Item $item): array
+    {
+        $serialized = GlobalItemDataHandlers::getSerializer()->serializeType($item);
+        return ['id' => $serialized->getName(), "damage" => $serialized->getMeta(), "count" => $item->getCount()];
+    }
+
+
+    /**
+     * @param array $info
+     * @return Item
+     * @throws SavedDataLoadingException
+     */
+    private static function upgradeItemJSON(array $info): Item
+    {
+        $nbt = "";
+
+        //Backwards compatibility
+        if (isset($data["nbt"])) {
+            $nbt = $data["nbt"];
+        } elseif (isset($data["nbt_hex"])) {
+            $nbt = hex2bin($data["nbt_hex"]);
+        } elseif (isset($data["nbt_b64"])) {
+            $nbt = base64_decode($data["nbt_b64"], true);
+        }
+        $itemStackData = GlobalItemDataHandlers::getUpgrader()->upgradeItemTypeDataString($info['id'], $info['damage'] ?? 0, $info['count'] ?? 1,
+            $nbt !== "" ? (new LittleEndianNbtSerializer())->read($nbt)->mustGetCompoundTag() : null
+        );
+
+        try {
+            return GlobalItemDataHandlers::getDeserializer()->deserializeStack($itemStackData);
+        } catch (ItemTypeDeserializeException $e) {
+            throw new SavedDataLoadingException($e->getMessage(), 0, $e);
+        }}
 
 }

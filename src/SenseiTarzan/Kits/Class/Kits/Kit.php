@@ -14,8 +14,9 @@ use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Utils\Convertor;
 use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
+use SenseiTarzan\Path\Config;
 
-class Kit
+class Kit implements \JsonSerializable
 {
 
     const DEFAULT_STRING_TAG = "2aa38484-6e72-4e91-943f-838905a7a995";
@@ -33,7 +34,7 @@ class Kit
      * @param float $delay
      * @param array $items
      */
-    public function __construct(private string $name, private IconForm $iconForm, private ?string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
+    public function __construct(private Config $config, private string $name, private IconForm $iconForm, private ?string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
     {
         $this->id = Format::nameToId($name);
         if ($this->descriptionPath !== null) {
@@ -53,9 +54,23 @@ class Kit
         $this->items = Convertor::jsonToItems($items);
     }
 
-    public static function create(string $name, string $image, ?string $descriptionPath, string $description, string $permission, float $delay, array $items): Kit
+    public static function create(Config $config,string $name, string $image, ?string $descriptionPath, string $description, string $permission, float $delay, array $items): Kit
     {
-        return new self($name, IconForm::create($image), $descriptionPath, $description, $permission, $delay, $items);
+        return new self($config,$name, IconForm::create($image), $descriptionPath, $description, $permission, $delay, $items);
+    }
+
+    public function createWithOutConfig(string $name, string $image, ?string $descriptionPath, string $description, string $permission, float $delay, array $items): Kit
+    {
+        $config = new Config($this->plugin->getDataFolder() . "Kits/" . $name . ".yml", Config::YAML);
+        return new self($config,$name, IconForm::create($image), $descriptionPath, $description, $permission, $delay, $items);
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->config;
     }
 
 
@@ -134,5 +149,16 @@ class Kit
     public function hasPermission(Player $player): bool
     {
         return $player->hasPermission($this->getPermission());
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            "name" => $this->getName(),
+            "description" => $this->getDescription(),
+            "permission" => $this->getPermission(),
+            "delay" => $this->getDelay(),
+            "items" => Convertor::itemsToJson($this->getItems())
+        ];
     }
 }

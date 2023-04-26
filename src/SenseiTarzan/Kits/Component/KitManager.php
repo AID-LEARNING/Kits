@@ -39,7 +39,7 @@ class KitManager
     public function load(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $kit = Kit::create($config->get('name'), $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
+            $kit = Kit::create($config,$config->get('name'), $config->get("image"), $config->getNested("description.path"), $config->getNested("description.default", null), $config->get("permission"),floatval($config->get("delay", -1)), $config->get("items"));
             $this->kits[$kit->getId()] = $kit;
         }
     }
@@ -156,6 +156,27 @@ class KitManager
         $player->getInventory()->addItem(...$kit->getItems());
         $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_open_kit($kit->getName())));
         return true;
+    }
+
+    public function UiEditIndex(Player $player)
+    {
+        $ui = new SimpleForm(function (Player $player, ?string $index): void {
+            if ($index === null) return;
+            $kit = $this->getKit($index);
+            if ($kit === null) return;
+            $this->UiEditKit($player, $kit);
+        });
+        $ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
+
+        foreach ($this->getKits() as $kit) {
+            $ui->addButton($kit->getName(), $kit->getIconForm()->getType(), $kit->getIconForm()->getPath(), $kit->getId());
+        }
+        $player->sendForm($ui);
+    }
+
+
+    public function UiEditKit(Player $player, Kit $kit){
+
     }
 
 }
