@@ -2,19 +2,21 @@
 
 namespace SenseiTarzan\Kits\Listener;
 
+use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\EventPriority;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\ItemBlock;
-use pocketmine\item\ItemIds;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Component\KitsPlayerManager;
+use SenseiTarzan\Kits\libs\muqsit\invmenu\InvMenuHandler;
 
 class PlayerListener
 {
@@ -51,6 +53,22 @@ class PlayerListener
         }
     }
 
+    private function onHand(InventoryTransactionEvent $event): void
+    {
+        $player = $event->getTransaction()->getSource();
+        foreach ($event->getTransaction()->getActions() as $action) {
+            if (InvMenuHandler::getPlayerManager()->getNullable($player) !== null) continue;
+            if (!$action->getSourceItem()->getNamedTag()->getByte("illegal", false)) {
+                $event->cancel();
+                $player->getInventory()->removeItem($action->getSourceItem());
+            }
+            if (!$action->getTargetItem()->getNamedTag()->getByte("illegal", false)) {
+                $event->cancel();
+                $player->getCursorInventory()->removeItem($action->getTargetItem());
+            }
+        }
+    }
+
     #[EventAttribute(EventPriority::LOWEST)]
     public function onUse(PlayerItemUseEvent $event): void
     {
@@ -58,7 +76,7 @@ class PlayerListener
         $player = $event->getPlayer();
         $item = $event->getItem();
         if ($item instanceof ItemBlock) {
-            if ($item->getBlock()->getId() === BlockLegacyIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
+            if ($item->getBlock()->getTypeId() === BlockLegacyIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
                 if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
                     $player->getInventory()->removeItem($item->setCount(1));
                     $event->cancel();

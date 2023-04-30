@@ -3,12 +3,14 @@
 namespace SenseiTarzan\Kits;
 
 use CortexPE\Commando\PacketHooker;
+use muqsit\invmenu\InvMenuHandler;
 use pocketmine\plugin\PluginBase;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\Kits\Class\Save\JSONSave;
 use SenseiTarzan\Kits\Class\Save\YAMLSave;
 use SenseiTarzan\Kits\Commands\KitCommand;
+use SenseiTarzan\Kits\Commands\WaitingPeriodCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Listener\PlayerListener;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
@@ -17,6 +19,7 @@ use Symfony\Component\Filesystem\Path;
 
 class Main extends PluginBase
 {
+
 
     protected function onLoad(): void
     {
@@ -42,10 +45,17 @@ class Main extends PluginBase
         if (!PacketHooker::isRegistered()) {
             PacketHooker::register($this);
         }
+        if (!InvMenuHandler::isRegistered()) {
+            InvMenuHandler::register($this);
+
+        }
         EventLoader::loadEventWithClass($this, PlayerListener::class);
         LanguageManager::getInstance()->loadCommands("kits");
 
-        $this->getServer()->getCommandMap()->register("kits", new KitCommand($this, "kit", "Kits command", ["kits"]));
+        $this->getServer()->getCommandMap()->registerAll("kits", [
+            new KitCommand($this, "kit", "Kits command", ["kits"]),
+            new WaitingPeriodCommand($this, "kits-wp", "WaitingPeriod command", ["kit-wp"])
+        ]);
     }
 
 }

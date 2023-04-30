@@ -1,6 +1,6 @@
 name: Kits
 main: SenseiTarzan\Kits\Main
-version: 1.0.0
+version: 1.0.1
 api: 4.0.0
 authors:
   - SenseiTarzan
@@ -12,3 +12,12 @@ permissions:
   kits.command.kit:
     default: true
     description: "Kits command"
+  kits.command.kit.create:
+    default: op
+    description: "Create kit command"
+  kits.command.kit.edit:
+    default: op
+    description: "Edit kit command"
+  kits.command.kit.reload:
+    description: "Reload kit command"
+    default: op

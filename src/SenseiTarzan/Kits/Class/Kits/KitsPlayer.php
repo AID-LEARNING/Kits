@@ -7,8 +7,8 @@ use pocketmine\Server;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Utils\Convertor;
-use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
+use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class KitsPlayer implements \JsonSerializable
 {

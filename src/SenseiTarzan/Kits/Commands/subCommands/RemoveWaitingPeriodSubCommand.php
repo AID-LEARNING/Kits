@@ -7,8 +7,8 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Component\KitsPlayerManager;
-use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
+use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class RemoveWaitingPeriodSubCommand extends BaseSubCommand
 {
