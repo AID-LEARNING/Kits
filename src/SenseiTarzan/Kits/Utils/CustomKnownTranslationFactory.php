@@ -59,11 +59,6 @@ class CustomKnownTranslationFactory
         return new Translatable(CustomKnownTranslationKeys::SUCCESS_OPEN_KIT, ['kit' => $kit]);
     }
 
-    public static function success_add_waiting_period(string $kit): Translatable
-    {
-        return new Translatable(CustomKnownTranslationKeys::SUCCESS_ADD_WAITING_PERIOD, ['kit' => $kit]);
-    }
-
     public static function error_not_found_waiting_period(mixed $player, mixed $kit): Translatable
     {
         return new Translatable(CustomKnownTranslationKeys::ERROR_NOT_FOUND_WAITING_PERIOD, ['player' => $player instanceof Player ? $player->getName() : $player, 'kit' => $kit instanceof Kit ? $kit->getName() : $kit]);
@@ -141,14 +136,19 @@ class CustomKnownTranslationFactory
         return new Translatable(CustomKnownTranslationKeys::BUTTONS_REMOVE);
     }
 
-    public static function success_save_kit(Kit|string $kit)
+    public static function success_save_kit(Kit|string $kit): Translatable
     {
         return new Translatable(CustomKnownTranslationKeys::SUCCESS_SAVE_KIT, ['kit' => $kit instanceof Kit ? $kit->getName() : $kit]);
     }
 
-    public static function success_delete_kit(Kit|string $kit)
+    public static function success_delete_kit(Kit|string $kit): Translatable
     {
         return new Translatable(CustomKnownTranslationKeys::SUCCESS_DELETE_KIT, ['kit' => $kit instanceof Kit ? $kit->getName() : $kit]);
+    }
+
+    public static function success_remove_waiting_period(Player|string $player, Kit|string $kit): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::SUCCESS_REMOVE_WAITING_PERIOD, ['player' => $player instanceof Player ? $player->getName() : $player, 'kit' => $kit instanceof Kit ? $kit->getName() : $kit]);
     }
 
 

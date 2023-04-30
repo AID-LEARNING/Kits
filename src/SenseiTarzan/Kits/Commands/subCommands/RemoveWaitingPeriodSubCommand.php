@@ -31,6 +31,7 @@ class RemoveWaitingPeriodSubCommand extends BaseSubCommand
             $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::error_no_exist_kit("?")));
             return;
         }
+
         $kitsPlayer = KitsPlayerManager::getInstance()->getPlayer($player);
         if ($kitsPlayer === null) {
             $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::error_not_found_kits_player_admin($player)));
@@ -42,6 +43,7 @@ class RemoveWaitingPeriodSubCommand extends BaseSubCommand
         }
 
         $kitsPlayer->removeWaitingPeriod($kit->getId());
+        $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::success_remove_waiting_period($player, $kit)));
     }
 
     public function getPermission(): string
