@@ -22,7 +22,7 @@ class reloadKitsubCommand extends BaseSubCommand
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         KitManager::getInstance()->reload();
-        $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::reload_kit_successful(KitManager::getInstance()->getKits())));
+        $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::success_reload_kit(KitManager::getInstance()->getKits())));
     }
 
     public function getPermission(): string
