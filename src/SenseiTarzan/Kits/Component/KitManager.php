@@ -18,10 +18,10 @@ use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Main;
+use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
 use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Path\PathScanner;
-use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
 use Symfony\Component\Filesystem\Path;
 
 class KitManager

@@ -4,8 +4,9 @@ namespace SenseiTarzan\Kits\Commands\args;
 
 use CortexPE\Commando\args\StringEnumArgument;
 use pocketmine\command\CommandSender;
-use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Class\Kits\Kit;
+use SenseiTarzan\Kits\Component\KitManager;
+
 class KitListArgument extends StringEnumArgument
 {
 

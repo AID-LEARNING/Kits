@@ -5,12 +5,7 @@ namespace SenseiTarzan\Kits\Commands;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\constraint\InGameRequiredConstraint;
 use pocketmine\command\CommandSender;
-use pocketmine\player\Player;
-use SenseiTarzan\Kits\Commands\subCommands\createKitSubCommand;
-use SenseiTarzan\Kits\Commands\subCommands\editKitsubCommand;
-use SenseiTarzan\Kits\Commands\subCommands\reloadKitsubCommand;
 use SenseiTarzan\Kits\Commands\subCommands\RemoveWaitingPeriodSubCommand;
-use SenseiTarzan\Kits\Component\KitManager;
 
 class WaitingPeriodCommand extends BaseCommand
 {

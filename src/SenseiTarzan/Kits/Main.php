@@ -3,18 +3,13 @@
 namespace SenseiTarzan\Kits;
 
 use CortexPE\Commando\PacketHooker;
-use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\InvMenuHandler;
-use muqsit\invmenu\type\InvMenuTypeRegistry;
-use muqsit\invmenu\type\util\InvMenuTypeBuilders;
-use pocketmine\block\VanillaBlocks;
 use pocketmine\plugin\PluginBase;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\Kits\Class\Save\JSONSave;
 use SenseiTarzan\Kits\Class\Save\YAMLSave;
 use SenseiTarzan\Kits\Commands\KitCommand;
-use SenseiTarzan\Kits\Commands\TestCommand;
 use SenseiTarzan\Kits\Commands\WaitingPeriodCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Listener\PlayerListener;

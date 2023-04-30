@@ -9,12 +9,12 @@ use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\player\Player;
+use pocketmine\utils\Config;
 use SenseiTarzan\IconUtils\IconForm;
 use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Utils\Convertor;
 use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
-use pocketmine\utils\Config;
 
 class Kit implements JsonSerializable
 {
