@@ -55,7 +55,7 @@ class KitManager
 
     private function createKit(string $name, string $image, string $description, string $permission, float $delay, array $items): Kit
     {
-        $config = new Config(Path::join($this->plugin->getDataFolder(), "Kits", Format::nameToId($name) . ".yml"), Config::YAML);
+        $config = new Config(Path::join($this->plugin->getDataFolder(), "Kits", Format::nameToId($name). ".kit.yml"), Config::YAML);
         $kit = Kit::create($config, $name, $image, "Kit.description." . Format::nameToId($name), $description, $permission, $delay, $items);
         $config->setAll($kit->jsonSerialize());
         $config->save();
