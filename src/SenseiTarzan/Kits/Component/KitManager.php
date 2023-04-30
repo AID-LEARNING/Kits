@@ -9,7 +9,7 @@ use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
 use muqsit\invmenu\type\InvMenuTypeIds;
-use pocketmine\block\BlockTypeIds;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
@@ -299,7 +299,7 @@ class KitManager
         });
         $chestMenu->setInventoryCloseListener(function (Player $player, Inventory $inventory) use ($kit, $edit): void {
             $kit->setItems(array_filter($inventory->getContents(), function (Item $item): bool {
-                return !$item->isNull() && !($item->getNamedTag()->getByte("illegal", false) || $item->getTypeId() === -BlockTypeIds::BARRIER);
+                return !$item->isNull() && !($item->getNamedTag()->getByte("illegal", false) || $item->getBlock()->getId() === BlockLegacyIds::BARRIER);
             }));
             $kit->save();
             $player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));

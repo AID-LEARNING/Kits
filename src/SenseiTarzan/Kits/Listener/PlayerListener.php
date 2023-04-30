@@ -2,7 +2,8 @@
 
 namespace SenseiTarzan\Kits\Listener;
 
-use pocketmine\block\BlockTypeIds;
+use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\EventPriority;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -41,7 +42,7 @@ class PlayerListener
             $player = $event->getPlayer();
             $item = $event->getItem();
             if ($item instanceof ItemBlock) {
-                if ($item->getBlock()->getTypeId() === BlockTypeIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
+                if ($item->getBlock()->getId() === BlockLegacyIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
                     if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
                         $player->getInventory()->removeItem($item->setCount(1));
                         $event->cancel();
@@ -75,7 +76,7 @@ class PlayerListener
         $player = $event->getPlayer();
         $item = $event->getItem();
         if ($item instanceof ItemBlock) {
-            if ($item->getBlock()->getTypeId() === BlockTypeIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
+            if ($item->getBlock()->getTypeId() === BlockLegacyIds::CHEST && $item->getNamedTag()->getTag("kit") !== null) {
                 if (KitManager::getInstance()->giveKitToPlayer($player, $item->getNamedTag()->getString("kit", Kit::DEFAULT_STRING_TAG))) {
                     $player->getInventory()->removeItem($item->setCount(1));
                     $event->cancel();

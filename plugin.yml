@@ -1,7 +1,7 @@
-name: kits
+name: Kits
 main: SenseiTarzan\Kits\Main
-version: 1.0.0
-api: 5.0.0
+version: 1.0.1
+api: 4.0.0
 authors:
   - SenseiTarzan
 description: "Kits plugin for PocketMine-MP"
@@ -18,3 +18,6 @@ permissions:
   kits.command.kit.edit:
     default: op
     description: "Edit kit command"
+  kits.command.kit.reload:
+    description: "Reload kit command"
+    default: op

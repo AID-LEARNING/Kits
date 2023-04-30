@@ -14,10 +14,8 @@ projects:
         version: ^1.0.4
       - src: AID-LEARNING/ExtraEvent/libEventAttribute
         version: ^1.0.2
-        branch: pm5
       - src: AID-LEARNING/libExtraPath/libExtraPathConfig
         version: ^1.0.1
-        branch: pm5
       - src: AID-LEARNING/FormAPI/libFormAPI
         version: ^2.1.0
       - src: AID-LEARNING/IconForm/libIconForm
@@ -27,6 +25,5 @@ projects:
       - src: Paroxity/Commando/Commando
         version: ^3.0.0
       - src: AID-LEARNING/InvMenu/InvMenu
-        version: ^4.5.0
-        branch: pm5
+        version: ^4.5.1
 ...
