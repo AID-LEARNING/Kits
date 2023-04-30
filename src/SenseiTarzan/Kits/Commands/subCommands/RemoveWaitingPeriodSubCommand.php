@@ -43,6 +43,7 @@ class RemoveWaitingPeriodSubCommand extends BaseSubCommand
         }
 
         $kitsPlayer->removeWaitingPeriod($kit->getId());
+        $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::success_remove_waiting_period($player, $kit)));
     }
 
     public function getPermission(): string
