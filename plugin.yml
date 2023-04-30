@@ -18,3 +18,6 @@ permissions:
   kits.command.kit.edit:
     default: op
     description: "Edit kit command"
+  kits.command.kit.reload:
+    default: op
+    description: "Reload kit command"
