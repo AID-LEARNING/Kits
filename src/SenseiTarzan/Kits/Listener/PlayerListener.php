@@ -4,6 +4,7 @@ namespace SenseiTarzan\Kits\Listener;
 
 use pocketmine\block\BlockTypeIds;
 use pocketmine\event\EventPriority;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -14,6 +15,7 @@ use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Component\KitsPlayerManager;
+use SenseiTarzan\Kits\libs\muqsit\invmenu\InvMenuHandler;
 
 class PlayerListener
 {
@@ -46,6 +48,22 @@ class PlayerListener
 
                     }
                 }
+            }
+        }
+    }
+
+    private function onHand(InventoryTransactionEvent $event): void
+    {
+        $player = $event->getTransaction()->getSource();
+        foreach ($event->getTransaction()->getActions() as $action) {
+            if (InvMenuHandler::getPlayerManager()->getNullable($player) !== null) continue;
+            if (!$action->getSourceItem()->getNamedTag()->getByte("illegal", false)) {
+                $event->cancel();
+                $player->getInventory()->removeItem($action->getSourceItem());
+            }
+            if (!$action->getTargetItem()->getNamedTag()->getByte("illegal", false)) {
+                $event->cancel();
+                $player->getCursorInventory()->removeItem($action->getTargetItem());
             }
         }
     }

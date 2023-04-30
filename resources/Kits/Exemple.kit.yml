@@ -1,8 +1,6 @@
 name: Exemple
 image: "textures/items/apple"
-description:
-  path: "Kit.description.Exemple" ## You can find the description of your kit in all languages, and you can modify it there after the default configuration has been set up. There's no point in changing the kit's configuration.
-  default: "Exemple kit \n1xStone\n2xUpdate block"
+description: "Exemple kit \n1xStone\n2xUpdate block"
 permission: "Exemple.kit.permission"
 delay: 60 # delay is in seconds
 items:

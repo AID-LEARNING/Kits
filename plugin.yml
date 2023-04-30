@@ -12,3 +12,9 @@ permissions:
   kits.command.kit:
     default: true
     description: "Kits command"
+  kits.command.kit.create:
+    default: op
+    description: "Create kit command"
+  kits.command.kit.edit:
+    default: op
+    description: "Edit kit command"

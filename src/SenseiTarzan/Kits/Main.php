@@ -3,12 +3,18 @@
 namespace SenseiTarzan\Kits;
 
 use CortexPE\Commando\PacketHooker;
+use muqsit\invmenu\InvMenu;
+use muqsit\invmenu\InvMenuHandler;
+use muqsit\invmenu\type\InvMenuTypeRegistry;
+use muqsit\invmenu\type\util\InvMenuTypeBuilders;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\plugin\PluginBase;
 use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\Kits\Class\Save\JSONSave;
 use SenseiTarzan\Kits\Class\Save\YAMLSave;
 use SenseiTarzan\Kits\Commands\KitCommand;
+use SenseiTarzan\Kits\Commands\TestCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Listener\PlayerListener;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
@@ -17,6 +23,7 @@ use Symfony\Component\Filesystem\Path;
 
 class Main extends PluginBase
 {
+
 
     protected function onLoad(): void
     {
@@ -41,6 +48,10 @@ class Main extends PluginBase
         }
         if (!PacketHooker::isRegistered()) {
             PacketHooker::register($this);
+        }
+        if (!InvMenuHandler::isRegistered()) {
+            InvMenuHandler::register($this);
+
         }
         EventLoader::loadEventWithClass($this, PlayerListener::class);
         LanguageManager::getInstance()->loadCommands("kits");

@@ -10,6 +10,7 @@ use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\UnsupportedItemTypeException;
 use pocketmine\data\bedrock\item\upgrade\R12ItemIdToBlockIdMap;
 use pocketmine\data\SavedDataLoadingException;
+use pocketmine\item\Durable;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
@@ -101,7 +102,7 @@ class Convertor
     private static function itemToJson(Item $item): array
     {
         $serialized = GlobalItemDataHandlers::getSerializer()->serializeType($item);
-        return ['id' => $serialized->getName(), "damage" => $serialized->getMeta(), "count" => $item->getCount()];
+        return ['id' => $serialized->getName(), "damage" => $item instanceof Durable ? $item->getDamage() : $serialized->getMeta(), "count" => $item->getCount(), "customName" => $item->getCustomName(), "enchant" => self::enchantToJson($item), "lore" => $item->getLore()];
     }
 
 
@@ -130,6 +131,17 @@ class Convertor
             return GlobalItemDataHandlers::getDeserializer()->deserializeStack($itemStackData);
         } catch (ItemTypeDeserializeException $e) {
             throw new SavedDataLoadingException($e->getMessage(), 0, $e);
-        }}
+        }
+    }
+
+
+    private static function enchantToJson(Item $item): array
+    {
+        $enchant = [];
+        foreach ($item->getEnchantments() as $enchantment) {
+            $enchant[EnchantmentIdMap::getInstance()->toId($enchantment->getType())] = $enchantment->getLevel();
+        }
+        return $enchant;
+    }
 
 }
