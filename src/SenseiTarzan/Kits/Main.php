@@ -15,6 +15,7 @@ use SenseiTarzan\Kits\Class\Save\JSONSave;
 use SenseiTarzan\Kits\Class\Save\YAMLSave;
 use SenseiTarzan\Kits\Commands\KitCommand;
 use SenseiTarzan\Kits\Commands\TestCommand;
+use SenseiTarzan\Kits\Commands\WaitingPeriodCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Listener\PlayerListener;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
@@ -56,7 +57,10 @@ class Main extends PluginBase
         EventLoader::loadEventWithClass($this, PlayerListener::class);
         LanguageManager::getInstance()->loadCommands("kits");
 
-        $this->getServer()->getCommandMap()->register("kits", new KitCommand($this, "kit", "Kits command", ["kits"]));
+        $this->getServer()->getCommandMap()->registerAll("kits", [
+            new KitCommand($this, "kit", "Kits command", ["kits"]),
+            new WaitingPeriodCommand($this, "kits-wp", "WaitingPeriod command", ["kit-wp"])
+        ]);
     }
 
 }

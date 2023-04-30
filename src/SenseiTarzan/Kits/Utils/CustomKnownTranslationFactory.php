@@ -163,5 +163,10 @@ class CustomKnownTranslationFactory
         return new Translatable(CustomKnownTranslationKeys::CONTENT_REMOVE_KIT, ['kit' => $kit->getName()]);
     }
 
+    public static function reload_kit_successful(array $getKits): Translatable
+    {
+        return new Translatable(CustomKnownTranslationKeys::RELOAD_KIT_SUCCESSFUL, ['kits' => implode(', ', $getKits)]);
+    }
+
 
 }

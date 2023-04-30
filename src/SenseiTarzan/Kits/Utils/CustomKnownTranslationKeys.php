@@ -46,4 +46,5 @@ class CustomKnownTranslationKeys
     const TITLE_KIT_CREATE = "Kit.title.create";
     const SUCCESS_DELETE_KIT = "Kit.success.delete";
     const CONTENT_REMOVE_KIT = "Kit.content.remove";
+    const RELOAD_KIT_SUCCESSFUL = "Kit.reload.successful";
 }

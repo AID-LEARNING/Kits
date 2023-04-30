@@ -9,9 +9,10 @@ use pocketmine\player\Player;
 use SenseiTarzan\Kits\Commands\subCommands\createKitSubCommand;
 use SenseiTarzan\Kits\Commands\subCommands\editKitsubCommand;
 use SenseiTarzan\Kits\Commands\subCommands\reloadKitsubCommand;
+use SenseiTarzan\Kits\Commands\subCommands\RemoveWaitingPeriodSubCommand;
 use SenseiTarzan\Kits\Component\KitManager;
 
-class KitCommand extends BaseCommand
+class WaitingPeriodCommand extends BaseCommand
 {
 
     /**
@@ -20,18 +21,12 @@ class KitCommand extends BaseCommand
     protected function prepare(): void
     {
         $this->setPermission($this->getPermission());
+        $this->registerSubCommand(new RemoveWaitingPeriodSubCommand($this->plugin, "del", "Remove waiting period of a kit", ["delete", "remove", "rm"]));
         $this->addConstraint(new InGameRequiredConstraint($this));
-        $this->registerSubCommand(new createKitSubCommand($this->plugin, "create", "Create a kit", ["c", "cr", "make"]));
-        $this->registerSubCommand(new editKitsubCommand($this->plugin, "edit", "Edit a kit", ["e", "ed"]));
-        $this->registerSubCommand(new reloadKitsubCommand($this->plugin, "reload", "Reload kits", ["r", "rl"]));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        if (!($sender instanceof Player)) {
-            return;
-        }
-        KitManager::getInstance()->UIindex($sender);
     }
 
     public function getPermission(): string
