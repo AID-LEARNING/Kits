@@ -27,22 +27,26 @@ class RemoveWaitingPeriodSubCommand extends BaseSubCommand
     {
         $player = $args["player"];
         $kit = $args["kit"];
+        if ($kit === null) {
+            $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::error_no_exist_kit("?")));
+            return;
+        }
 
         $kitsPlayer = KitsPlayerManager::getInstance()->getPlayer($player);
         if ($kitsPlayer === null) {
             $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::error_not_found_kits_player_admin($player)));
             return;
         }
-        if (!$kitsPlayer->hasWaitingPeriod($kit)) {
+        if (!$kitsPlayer->hasWaitingPeriod($kit->getId())) {
             $sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::error_not_found_waiting_period($player, $kit)));
             return;
         }
 
-        $kitsPlayer->removeWaitingPeriod($kit);
+        $kitsPlayer->removeWaitingPeriod($kit->getId());
     }
 
     public function getPermission(): string
     {
-        return "kits.command.kit.removeWaitingPeriod";
+        return "kits.command.kit-wp.remove";
     }
 }
