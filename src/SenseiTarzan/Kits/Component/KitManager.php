@@ -17,7 +17,6 @@ use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\Kits\Class\Kits\Kit;
-use SenseiTarzan\Kits\Commands\args\KitListArgument;
 use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Kits\Utils\Format;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
@@ -44,24 +43,40 @@ class KitManager
 
     /**
      * @return void
+     * @throws \JsonException
      */
     public function load(): void
     {
         foreach (PathScanner::scanDirectoryToConfig(Path::join($this->plugin->getDataFolder(), "Kits"), ['yml']) as $config) {
-            $kit = Kit::create($config, $name = $config->get('name'), $config->get("image"), "Kit.description." . Format::nameToId($name), $config->getNested("description", null), $config->get("permission"), floatval($config->get("delay", -1)), $config->get("items"));
+            if (is_array($description = $config->get("description"))) {
+                $config->set("description", $description = $description["default"] ?? "Description not found");
+                $config->save();
+            }
+            $kit = Kit::create($config, $name = $config->get('name'), $config->get("image"), "Kit.description." . Format::nameToId($name), $description, $config->get("permission"), floatval($config->get("delay", -1)), $config->get("items"));
             $this->kits[$kit->getId()] = $kit;
         }
     }
 
+    /**
+     * @param string $name
+     * @param string $image
+     * @param string $description
+     * @param string $permission
+     * @param float $delay
+     * @param array $items
+     * @return Kit
+     * @throws \JsonException
+     */
     private function createKit(string $name, string $image, string $description, string $permission, float $delay, array $items): Kit
     {
-        $config = new Config(Path::join($this->plugin->getDataFolder(), "Kits", Format::nameToId($name). ".kit.yml"), Config::YAML);
+        $config = new Config(Path::join($this->plugin->getDataFolder(), "Kits", Format::nameToId($name) . ".kit.yml"), Config::YAML);
         $kit = Kit::create($config, $name, $image, "Kit.description." . Format::nameToId($name), $description, $permission, $delay, $items);
         $config->setAll($kit->jsonSerialize());
         $config->save();
         $this->kits[$kit->getId()] = $kit;
         return $kit;
     }
+
 
     /**
      * Allows to update the kit but also to be sure that all items have been found
@@ -201,7 +216,7 @@ class KitManager
         $player->sendForm($ui);
     }
 
-    public function UIEditIndex(Player $player)
+    public function UIEditIndex(Player $player): void
     {
         $ui = new SimpleForm(function (Player $player, ?string $index): void {
             if ($index === null) return;
@@ -233,9 +248,6 @@ class KitManager
                     $this->GUIEditOrCreateKitItems($player, $kit, true);
                     break;
                 case 2:
-                    $this->UIEditKit($player, $kit);
-                    break;
-                case 3:
                     $this->UIConfirmeRemoveKit($player, $kit);
                     break;
             }
@@ -314,12 +326,23 @@ class KitManager
         $player->sendForm($ui);
     }
 
+    /**
+     * @param Kit $kit
+     * @return void
+     * @throws \JsonException
+     */
     private function removeKit(Kit $kit): void
     {
         $configFile = $kit->getConfig()->getPath();
-        if (!file_exists($configFile) || !is_file($configFile)) return;
+        if (file_exists($configFile)) {
+            unlink($configFile);
+        }
         unset($this->kits[$kit->getId()]);
-        unset(KitListArgument::$VALUES[$kit->getId()]);
-        unlink($configFile);
+        foreach (LanguageManager::getInstance()->getAllLang() as $language) {
+            $config = $language->getConfig();
+            if ($config->getNested($kit->getDescriptionPath()) === null) continue;
+            $config->removeNested($kit->getDescriptionPath());
+            $config->save();
+        }
     }
 }

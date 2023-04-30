@@ -34,7 +34,7 @@ class Kit implements JsonSerializable
      * @param float $delay
      * @param array $items
      */
-    public function __construct(private Config $config, private string $name, private IconForm $iconForm, private ?string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
+    public function __construct(private Config $config, private string $name, private IconForm $iconForm, private string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
     {
         $this->id = Format::nameToId($name);
         if ($this->descriptionPath !== null) {
@@ -87,7 +87,15 @@ class Kit implements JsonSerializable
      */
     public function getDescription(CommandSender|string|null $player = null): string
     {
-        return $player === null ? $this->getDescriptionRaw() : ($this->descriptionPath !== null ? LanguageManager::getInstance()->getTranslate($player, $this->descriptionPath, [], $this->getDescriptionRaw()) : $this->getDescriptionRaw());
+        return $player === null ? $this->getDescriptionRaw() :  LanguageManager::getInstance()->getTranslate($player, $this->descriptionPath, [], $this->getDescriptionRaw());
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescriptionPath(): string
+    {
+        return $this->descriptionPath;
     }
 
     public function getDescriptionRaw(): string
@@ -203,5 +211,14 @@ class Kit implements JsonSerializable
             "delay" => $this->getDelay(),
             "items" => Convertor::itemsToJson($this->getItems())
         ];
+    }
+
+    public function __destruct()
+    {
+        unset(KitListArgument::$VALUES[$this->getId()]);
+        if (PermissionManager::getInstance()->getPermission($this->permission) !== null) {
+            PermissionManager::getInstance()->removePermission($this->permission);
+            PermissionManager::getInstance()->getPermission(DefaultPermissions::ROOT_OPERATOR)->removeChild($this->permission);
+        }
     }
 }
