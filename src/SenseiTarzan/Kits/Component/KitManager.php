@@ -311,6 +311,7 @@ class KitManager
         $ui->setContent(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::content_remove_kit($kit)));
         $ui->setButton1(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
         $ui->setButton2(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
+        $player->sendForm($ui);
     }
 
     private function removeKit(Kit $kit): void
