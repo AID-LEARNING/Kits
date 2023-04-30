@@ -26,6 +26,6 @@ class WaitingPeriodCommand extends BaseCommand
 
     public function getPermission(): string
     {
-        return "kits.command.kit";
+        return "kits.command.kit-wp";
     }
 }

@@ -21,3 +21,9 @@ permissions:
   kits.command.kit.reload:
     description: "Reload kit command"
     default: op
+  kits.command.kit-wp:
+    default: op
+    description: "Kit-wp command"
+  kits.command.kit-wp.remove:
+    default: op
+    description: "Remove kit-wp command"
