@@ -190,7 +190,6 @@ class Kit implements JsonSerializable
     public function save(): void
     {
         $this->getConfig()->setAll($this->jsonSerialize());
-        var_dump($this->getConfig()->getAll());
         $this->getConfig()->save();
     }
 
