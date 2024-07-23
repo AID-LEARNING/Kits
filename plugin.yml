@@ -3,27 +3,30 @@ main: SenseiTarzan\Kits\Main
 version: 1.0.0
 api: 5.0.0
 authors:
-  - SenseiTarzan
+    - SenseiTarzan
+softdepend:
+    - "SymplyPlugin"
+    - "Customies"
 description: "Kits plugin for PocketMine-MP"
 permissions:
-  kits.command.kit.removeWaitingPeriod:
-    default: op
-    description: "Remove waiting period for kit"
-  kits.command.kit:
-    default: true
-    description: "Kits command"
-  kits.command.kit.create:
-    default: op
-    description: "Create kit command"
-  kits.command.kit.edit:
-    default: op
-    description: "Edit kit command"
-  kits.command.kit.reload:
-    default: op
-    description: "Reload kit command"
-  kits.command.kit-wp:
-    default: op
-    description: "Kit-wp command"
-  kits.command.kit-wp.remove:
-    default: op
-    description: "Remove kit-wp command"
+    kits.command.kit.removeWaitingPeriod:
+     default: op
+     description: "Remove waiting period for kit"
+    kits.command.kit:
+     default: true
+     description: "Kits command"
+    kits.command.kit.create:
+     default: op
+     description: "Create kit command"
+    kits.command.kit.edit:
+     default: op
+     description: "Edit kit command"
+    kits.command.kit.reload:
+     default: op
+     description: "Reload kit command"
+    kits.command.kit-wp:
+     default: op
+     description: "Kit-wp command"
+    kits.command.kit-wp.remove:
+     default: op
+     description: "Remove kit-wp command"

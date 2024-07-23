@@ -1,3 +1,6 @@
 .idea
 out
-.cache
+*.phar
+.php-cs-fixer.cache
+vendor
+php-cs-fixer-v3.phar

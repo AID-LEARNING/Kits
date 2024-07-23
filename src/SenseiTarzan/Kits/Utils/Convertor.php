@@ -173,9 +173,9 @@ class Convertor
 			->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($nbtRaw, true)))
 			->mustGetCompoundTag();
 
-		$count = $info['count'] ?? 4;
-		$canPlaceOn = $info['can_place_on'] ?? 4;
-		$canDestroy = $info['can_destroy'] ?? 4;
+		$count = $info['count'] ?? 1;
+		$canPlaceOn = $info['can_place_on'] ?? [];
+		$canDestroy = $info['can_destroy'] ?? [];
 		$itemStackData = new SavedItemStackData(
 			new SavedItemData(
 				$name,
