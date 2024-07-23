@@ -157,7 +157,7 @@ class Convertor
 			$blockStatesTag = $blockStatesRaw === null ?
 				[] :
 				(new LittleEndianNbtSerializer())
-					->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($blockStatesRaw, true)))
+					->read(base64_decode($blockStatesRaw, true))
 					->mustGetCompoundTag()
 					->getValue();
 			$blockStateData = BlockStateData::current($blockName, $blockStatesTag);
