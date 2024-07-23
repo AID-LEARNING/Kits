@@ -282,7 +282,7 @@ class KitManager
 		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_name()), $kit->getName(), $kit->getName());
 		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_image()), $kit->getIconForm()->getPath(), $kit->getIconForm()->getPath());
 		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_permission()), $kit->getPermission(), $kit->getPermission());
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()), $kit->getDelay(), $kit->getDelay());
+		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()), (string)$kit->getDelay(), (string)$kit->getDelay());
 
 		$player->sendForm($ui);
 	}
@@ -307,7 +307,7 @@ class KitManager
 		});
 		$chestMenu->setInventoryCloseListener(function (Player $player, Inventory $inventory) use ($kit, $edit) : void {
 			$kit->setItems(array_filter($inventory->getContents(), function (Item $item) : bool {
-				return !$item->isNull() && !($item->getNamedTag()->getByte("illegal", false) || $item->getTypeId() === -BlockTypeIds::BARRIER);
+				return !$item->isNull() && !($item->getNamedTag()->getByte("illegal", 0) || $item->getTypeId() === -BlockTypeIds::BARRIER);
 			}));
 			$kit->save();
 			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));
