@@ -21,42 +21,32 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\Kits\Commands\args;
+namespace SenseiTarzan\Kits\Class\Middleware;
 
-use CortexPE\Commando\args\StringEnumArgument;
-use pocketmine\command\CommandSender;
-use SenseiTarzan\Kits\Class\Kits\Kit;
-use SenseiTarzan\Kits\Component\KitManager;
-use function array_keys;
-use function strtolower;
+use Generator;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\SetLocalPlayerAsInitializedPacket;
+use SenseiTarzan\DataBase\Component\DataManager;
+use SenseiTarzan\Middleware\Class\IMiddleWare;
 
-class KitListArgument extends StringEnumArgument
+class KitMiddleware implements IMiddleWare
 {
 
-	public static array $VALUES = [];
-
-	public function parse(string $argument, CommandSender $sender) : ?Kit
+	public function getName() : string
 	{
-		return KitManager::getInstance()->getKit($argument);
+		return "Kit Middleware";
 	}
 
-	public function getValue(string $string)
+	/**
+	 * @inheritDoc
+	 */
+	public function onDetectPacket() : string
 	{
-		return self::$VALUES[strtolower($string)];
+		return SetLocalPlayerAsInitializedPacket::class;
 	}
 
-	public function getEnumValues() : array
+	public function getPromise(DataPacketReceiveEvent $event) : Generator
 	{
-		return array_keys(self::$VALUES);
-	}
-
-	public function getTypeName() : string
-	{
-		return "kit";
-	}
-
-	public function getEnumName() : string
-	{
-		return "KistList";
+		return DataManager::getInstance()->getDataSystem()->loadDataPlayerByMiddleware($event->getOrigin()->getPlayer());
 	}
 }
