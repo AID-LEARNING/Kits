@@ -171,7 +171,7 @@ class Convertor
 			$nbtRaw = base64_decode($info["nbt_b64"], true);
 		}
 		$nbt = $nbtRaw === null ? null : (new LittleEndianNbtSerializer())
-			->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($nbtRaw, true)))
+			->read($nbtRaw)
 			->mustGetCompoundTag();
 
 		$count = $info['count'] ?? 1;
