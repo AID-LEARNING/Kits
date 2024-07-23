@@ -52,12 +52,12 @@ abstract class IDataSaveKit implements IDataSave
 
 	final public function loadDataPlayerByMiddleware(Player|string $player) : Generator
 	{
-		return Await::promise(function ($resolve) use ($player){
+		return Await::promise(function ($resolve, $reject) use ($player){
 			Await::f2c(function () use ($player){
 			$data = yield from $this->createPromiseInitializeKitsPlayer($player);
 			KitsPlayerManager::getInstance()->loadPlayer(KitsPlayer::create($player, $data));
 			return null;
-		}, $resolve, $resolve);
+		}, $resolve, $reject);
 		});
 	}
 
