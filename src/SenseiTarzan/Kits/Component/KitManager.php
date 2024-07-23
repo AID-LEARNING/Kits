@@ -295,7 +295,7 @@ class KitManager
 			$chestMenu->getInventory()->addItem($item);
 		}
 		$barrier = VanillaBlocks::BARRIER()->asItem()->setCustomName("Illegal slot");
-		$barrier->getNamedTag()->setByte("illegal", true);
+		$barrier->getNamedTag()->setByte("illegal", 1);
 		for ($i = 36; $i < 54; $i++) {
 			$chestMenu->getInventory()->setItem($i, clone $barrier);
 		}
