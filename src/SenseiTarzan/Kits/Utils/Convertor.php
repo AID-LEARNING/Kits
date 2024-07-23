@@ -41,6 +41,7 @@ use pocketmine\item\StringToItemParser;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use SenseiTarzan\Kits\Class\Kits\WaitingPeriod;
@@ -81,7 +82,8 @@ class Convertor
 				if (isset($info['customName'])) {
 					$item->setCustomName($info['customName']);
 				}
-			} catch (Exception) {
+			} catch (Exception $exception) {
+				Server::getInstance()->getLogger()->logException($exception, $exception->getTrace());
 				$item = clone VanillaBlocks::INFO_UPDATE()->asItem()->setCustomName(TextFormat::DARK_RED . TextFormat::BOLD . "Error Item " . $info['id'] . ":" . ($info["damage"] ?? 0) . TextFormat::RESET . TextFormat::RED . " not found");
 			}
 		}
