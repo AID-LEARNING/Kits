@@ -146,6 +146,7 @@ class Convertor
 		$name = $info['id'];
 		$meta = $info['damage'] ?? 0;
 		$blockName = BlockItemIdMap::getInstance()->lookupBlockId($name);
+		$blockStateData = null;
 		if ($blockName !== null) {
 			if ($meta !== 0) {
 				throw new SavedDataLoadingException("Meta should not be specified for blockitems");
@@ -158,8 +159,6 @@ class Convertor
 					->mustGetCompoundTag()
 					->getValue();
 			$blockStateData = BlockStateData::current($blockName, $blockStatesTag);
-		} else {
-			$blockStateData = null;
 		}
 		$nbtRaw = null;
 		if (isset($info["nbt"])) {
@@ -187,7 +186,7 @@ class Convertor
 			null,
 			null,
 			$canPlaceOn,
-			$canDestroy,
+			$canDestroy
 		);
 
 		try {
@@ -203,7 +202,7 @@ class Convertor
 	 */
 	private static function upgradeItemJSON(array $info) : Item
 	{
-		if (($item = self::StringItemJson($info)))
+		if (($item = self::StringItemJson($info)) != null)
 			return $item;
 		$nbt = "";
 		//Backwards compatibility
