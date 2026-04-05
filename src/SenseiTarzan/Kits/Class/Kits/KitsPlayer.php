@@ -25,14 +25,14 @@ namespace SenseiTarzan\Kits\Class\Kits;
 
 use Generator;
 use pocketmine\player\Player;
-use pocketmine\Server;
-use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\Kits\Class\Exception\KitNoHasWaitingPeriodException;
 use SenseiTarzan\Kits\Class\Exception\KitNotExistException;
 use SenseiTarzan\Kits\Class\Exception\PlayerNoHasWaitingPeriodException;
 use SenseiTarzan\Kits\Component\KitManager;
+use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Kits\Utils\Convertor;
 use SOFe\AwaitGenerator\Await;
+use WeakReference;
 use function mb_strtolower;
 use function strtolower;
 use function time;
@@ -42,10 +42,15 @@ class KitsPlayer implements \JsonSerializable
 
 	private string $id;
 
-	public function __construct(private Player $player, public array $listWaitingPeriod)
+	/** @var WeakReference<Player> */
+	private readonly WeakReference $player;
+
+	public function __construct(Player $player, public array $listWaitingPeriod)
 	{
-		$this->id = mb_strtolower($this->getUsername());
+		$this->id = mb_strtolower($player->getName());
+		$this->player = WeakReference::create($player);
 	}
+
 	public static function create(Player $player, array $listWaitingPeriod) : self
 	{
 		return new self($player, Convertor::jsonToWaitingPeriod($listWaitingPeriod));
@@ -56,14 +61,24 @@ class KitsPlayer implements \JsonSerializable
 		return strtolower($this->getUsername());
 	}
 
+	public function isOnline() : bool
+	{
+		$player = $this->player->get();
+		return $player !== null && $player->isOnline();
+	}
+
 	public function getUsername() : string
 	{
-		return $this->player->getName();
+		$player = $this->player->get();
+		if ($player === null) {
+			return $this->id;
+		}
+		return $player->getName();
 	}
 
 	public function getPlayer() : ?Player
 	{
-		return Server::getInstance()->getPlayerExact($this->getUsername());
+		return $this->player->get();
 	}
 
 	/**
@@ -88,18 +103,18 @@ class KitsPlayer implements \JsonSerializable
 	{
 		return Await::promise(function ($resolve, $reject) use ($kit, $second) : void {
 			$kit = KitManager::getInstance()->getKit($kit);
-			if ($kit === null){
+			if ($kit === null) {
 				$reject(new KitNotExistException("$kit no exist"));
-				return ;
+				return;
 			}
-			Await::f2c(function () use($kit, $second) : Generator{
-				if ($kit->getDelay() === 0.0){
+			Await::f2c(function () use ($kit, $second) : Generator {
+				if ($kit->getDelay() === 0.0) {
 					return null;
 				}
 				$waitingPeriod = new WaitingPeriod($kit->getId(), time() + $second);
-				yield from DataManager::getInstance()->getDataSystem()->updateOnline($this->getId(), "addWaitingPeriod", $waitingPeriod);
+				yield from Main::getInstance()->getDataManager()->getDataSystem()->updateOnline($this->getId(), "addWaitingPeriod", $waitingPeriod);
 				return $waitingPeriod;
-			}, function (?WaitingPeriod $waitingPeriod) use($kit, $resolve){
+			}, function (?WaitingPeriod $waitingPeriod) use ($kit, $resolve) {
 				if ($waitingPeriod !== null)
 					$this->listWaitingPeriod[$kit->getId()] = $waitingPeriod;
 				$resolve();
@@ -110,11 +125,11 @@ class KitsPlayer implements \JsonSerializable
 	public function clearAllWaitingPeriod() : Generator
 	{
 		return Await::promise(function ($resolve, $reject) : void {
-			Await::f2c(function () : Generator{
-				if (empty($this->listWaitingPeriod)){
+			Await::f2c(function () : Generator {
+				if (empty($this->listWaitingPeriod)) {
 					throw new PlayerNoHasWaitingPeriodException();
 				}
-				yield from DataManager::getInstance()->getDataSystem()->updateOnline($this->getId(), "clearWaitingPeriod", null);
+				yield from Main::getInstance()->getDataManager()->getDataSystem()->updateOnline($this->getId(), "clearWaitingPeriod", null);
 			}, $resolve, $reject);
 		});
 	}
@@ -122,21 +137,21 @@ class KitsPlayer implements \JsonSerializable
 	public function removeWaitingPeriod(string $kit) : Generator
 	{
 		return Await::promise(function ($resolve, $reject) use ($kit) : void {
-			if (!$this->hasWaitingPeriod($kit)){
+			if (!$this->hasWaitingPeriod($kit)) {
 				$reject(new PlayerNoHasWaitingPeriodException("$kit no has waiting period"));
-				return ;
+				return;
 			}
 			$kit = KitManager::getInstance()->getKit($kit);
-			if ($kit === null){
+			if ($kit === null) {
 				$reject(new KitNotExistException("$kit no exist"));
-				return ;
+				return;
 			}
-			Await::f2c(function () use($kit) : Generator{
-				if ($kit->getDelay() > 0){
+			Await::f2c(function () use ($kit) : Generator {
+				if ($kit->getDelay() > 0) {
 					throw new KitNoHasWaitingPeriodException();
 				}
-				yield from DataManager::getInstance()->getDataSystem()->updateOnline($this->getId(), "removeWaitingPeriod", $kit->getId());
-			}, function () use($kit, $resolve){
+				yield from Main::getInstance()->getDataManager()->getDataSystem()->updateOnline($this->getId(), "removeWaitingPeriod", $kit->getId());
+			}, function () use ($kit, $resolve) {
 				unset($this->listWaitingPeriod[$kit->getId()]);
 				$resolve();
 			}, $reject);

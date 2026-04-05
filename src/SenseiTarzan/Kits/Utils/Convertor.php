@@ -32,7 +32,6 @@ use pocketmine\data\bedrock\item\ItemTypeDeserializeException;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\SavedItemStackData;
 use pocketmine\data\SavedDataLoadingException;
-use pocketmine\errorhandler\ErrorToExceptionHandler;
 use pocketmine\item\Durable;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;

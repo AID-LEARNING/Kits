@@ -33,9 +33,9 @@ use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use SenseiTarzan\IconUtils\IconForm;
 use SenseiTarzan\Kits\Commands\args\KitListArgument;
+use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Kits\Utils\Convertor;
 use SenseiTarzan\Kits\Utils\Format;
-use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class Kit implements JsonSerializable
 {
@@ -46,11 +46,11 @@ class Kit implements JsonSerializable
 	/** @var Item[] */
 	private array $items = [];
 
-	public function __construct(private Config $config, private string $name, private IconForm $iconForm, private string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
+	public function __construct(private readonly Config $config, private readonly string $name, private IconForm $iconForm, private readonly string $descriptionPath, private string $description, private string $permission, private float $delay, array $items)
 	{
 		$this->id = Format::nameToId($name);
 		if ($this->descriptionPath !== null) {
-			foreach (LanguageManager::getInstance()->getAllLang() as $language) {
+			foreach (Main::getInstance()->getLanguageManager()->getAllLang() as $language) {
 				$config = $language->getConfig();
 				if ($config->getNested($this->descriptionPath) !== null) continue;
 				$config->setNested($this->descriptionPath, $this->getDescriptionRaw());
@@ -88,7 +88,7 @@ class Kit implements JsonSerializable
 
 	public function getDescription(CommandSender|string|null $player = null) : string
 	{
-		return $player === null ? $this->getDescriptionRaw() :  LanguageManager::getInstance()->getTranslate($player, $this->descriptionPath, [], $this->getDescriptionRaw());
+		return $player === null ? $this->getDescriptionRaw() :  Main::getInstance()->getLanguageManager()->getTranslate($player, $this->descriptionPath, [], $this->getDescriptionRaw());
 	}
 
 	public function getDescriptionPath() : string

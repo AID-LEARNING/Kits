@@ -26,7 +26,7 @@ namespace SenseiTarzan\Kits\Class\Middleware;
 use Generator;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\SetLocalPlayerAsInitializedPacket;
-use SenseiTarzan\DataBase\Component\DataManager;
+use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Middleware\Class\AttributeMiddlewarePriority;
 use SenseiTarzan\Middleware\Class\IMiddleWare;
 use SenseiTarzan\Middleware\Class\MiddlewarePriority;
@@ -50,6 +50,6 @@ class KitMiddleware implements IMiddleWare
 
 	public function getPromise(DataPacketReceiveEvent $event) : Generator
 	{
-		return DataManager::getInstance()->getDataSystem()->loadDataPlayerByMiddleware($event->getOrigin()->getPlayer());
+		return Main::getInstance()->getDataManager()->getDataSystem()->loadDataPlayerByMiddleware($event->getOrigin()->getPlayer());
 	}
 }

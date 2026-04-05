@@ -32,11 +32,11 @@ use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\ItemBlock;
-use SenseiTarzan\DataBase\Component\DataManager;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Component\KitManager;
 use SenseiTarzan\Kits\Component\KitsPlayerManager;
+use SenseiTarzan\Kits\Main;
 
 readonly class PlayerListener
 {
@@ -47,7 +47,7 @@ readonly class PlayerListener
 	public function onJoin(PlayerJoinEvent $event) : void
 	{
 		if (!$this->hasMiddleware)
-			DataManager::getInstance()->getDataSystem()->loadDataPlayer($event->getPlayer());
+			Main::getInstance()->getDataManager()->getDataSystem()->loadDataPlayer($event->getPlayer());
 	}
 
 	#[EventAttribute(EventPriority::LOWEST)]
@@ -80,11 +80,11 @@ readonly class PlayerListener
 		$player = $event->getTransaction()->getSource();
 		foreach ($event->getTransaction()->getActions() as $action) {
 			if (InvMenuHandler::getPlayerManager()->getNullable($player) !== null) continue;
-			if (!$action->getSourceItem()->getNamedTag()->getByte("illegal", false)) {
+			if (!$action->getSourceItem()->getNamedTag()->getByte("illegal", 0)) {
 				$event->cancel();
 				$player->getInventory()->removeItem($action->getSourceItem());
 			}
-			if (!$action->getTargetItem()->getNamedTag()->getByte("illegal", false)) {
+			if (!$action->getTargetItem()->getNamedTag()->getByte("illegal", 0)) {
 				$event->cancel();
 				$player->getCursorInventory()->removeItem($action->getTargetItem());
 			}

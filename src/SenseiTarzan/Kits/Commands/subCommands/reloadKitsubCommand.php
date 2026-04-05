@@ -26,8 +26,8 @@ namespace SenseiTarzan\Kits\Commands\subCommands;
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use SenseiTarzan\Kits\Component\KitManager;
+use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
-use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class reloadKitsubCommand extends BaseSubCommand
 {
@@ -43,6 +43,6 @@ class reloadKitsubCommand extends BaseSubCommand
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args) : void
 	{
 		KitManager::getInstance()->reload();
-		$sender->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::success_reload_kit(KitManager::getInstance()->getKits())));
+		$sender->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($sender, CustomKnownTranslationFactory::success_reload_kit(KitManager::getInstance()->getKits())));
 	}
 }

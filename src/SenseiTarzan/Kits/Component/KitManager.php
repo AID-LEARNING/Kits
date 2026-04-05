@@ -35,13 +35,13 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
 use pocketmine\player\Player;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\Kits\Class\Kits\Kit;
 use SenseiTarzan\Kits\Main;
 use SenseiTarzan\Kits\Utils\CustomKnownTranslationFactory;
 use SenseiTarzan\Kits\Utils\Format;
-use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 use SenseiTarzan\Path\PathScanner;
 use SOFe\AwaitGenerator\Await;
 use Symfony\Component\Filesystem\Path;
@@ -130,7 +130,7 @@ class KitManager
 			if ($kit === null) return;
 			$this->UIKitRecovery($player, $kit);
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
 
 		foreach ($this->getKits() as $kit) {
 			if (!$kit->hasPermission($player)) continue;
@@ -145,12 +145,12 @@ class KitManager
 			if ($index === 0) {
 				$target = KitsPlayerManager::getInstance()->getPlayer($player);
 				if (!$kit->hasPermission($player)) {
-					$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_have_permissions()));
+					$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_have_permissions()));
 					return;
 				}
 				if ($kit->getDelay() > 0) {
 					if (!$target->canRetrieveKit($kit->getId())) {
-						$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
+						$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::get_waiting_period($kit->getName(), $target->getWaitingPeriod($kit->getId())?->getPeriod() ?? 0.0)));
 						return;
 					}
 				}
@@ -159,26 +159,26 @@ class KitManager
 				$chest->getNamedTag()->setString("kit", $kit->getId());
 
 				if (!$player->getInventory()->canAddItem($chest)) {
-					$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
+					$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
 					return;
 				}
 				Await::g2c(KitsPlayerManager::getInstance()->getPlayer($player)->addWaitingPeriod($kit->getId(), $kit->getDelay()),
 				function () use($player, $chest, $kit){
 					if ($kit->getDelay() > 0) {
-						$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::add_waiting_period($kit->getName(), $kit->getDelay())));
+						$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::add_waiting_period($kit->getName(), $kit->getDelay())));
 					}
 					$player->getInventory()->addItem($chest);
-					$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_get_kit($kit->getName())));
+					$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_get_kit($kit->getName())));
 				});
 			} else {
 				$this->UIindex($player);
 			}
 		});
 
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_information($kit->getName())));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_information($kit->getName())));
 		$ui->setContent($kit->getDescription($player));
-		$ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
-		$ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
+		$ui->addButton(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
+		$ui->addButton(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
 		$player->sendForm($ui);
 	}
 
@@ -187,20 +187,20 @@ class KitManager
 		if ($kitName === Kit::DEFAULT_STRING_TAG) return false;
 		$target = KitsPlayerManager::getInstance()->getPlayer($player);
 		if ($target === null) {
-			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_not_found_kits_player()));
+			$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_not_found_kits_player()));
 			return false;
 		}
 		$kit = $this->getKit($kitName);
 		if ($kit === null) {
-			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_exist_kit($kitName)));
+			$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_exist_kit($kitName)));
 			return false;
 		}
 		if (!$kit->hasFreePlace($player)) {
-			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
+			$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::error_no_free_place()));
 			return false;
 		}
 		$player->getInventory()->addItem(...$kit->getItems());
-		$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_open_kit($kit->getName())));
+		$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_open_kit($kit->getName())));
 		return true;
 	}
 
@@ -214,14 +214,16 @@ class KitManager
 			$permission = $data[3] ?? "";
 			$image = $data[4] ?? "";
 			$kit = $this->createKit($name, $image, $description, $permission, $delay, []);
-			$this->GUIEditOrCreateKitItems($player, $kit);
+            Main::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player, $kit): void {
+                $this->GUIEditOrCreateKitItems($player, $kit);
+            }), 20);
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_create()));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_name()));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_description()));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_permission()));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_image()));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_create()));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_name()));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_description()));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_permission()));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_image()));
 		$player->sendForm($ui);
 	}
 
@@ -233,7 +235,7 @@ class KitManager
 			if ($kit === null) return;
 			$this->UIEditKit($player, $kit);
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_index()));
 
 		foreach ($this->getKits() as $kit) {
 			$ui->addButton($kit->getName(), $kit->getIconForm()->getType(), $kit->getIconForm()->getPath(), $kit->getId());
@@ -253,17 +255,19 @@ class KitManager
 					$this->UIEditKitGeneralInfo($player, $kit);
 					break;
 				case 1:
-					$this->GUIEditOrCreateKitItems($player, $kit, true);
+					Main::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player, $kit): void {
+                        $this->GUIEditOrCreateKitItems($player, $kit, true);
+                    }), 20);
 					break;
 				case 2:
 					$this->UIConfirmeRemoveKit($player, $kit);
 					break;
 			}
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
-		$ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_general_information()));
-		$ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_items()));
-		$ui->addButton(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_remove()));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
+		$ui->addButton(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_general_information()));
+		$ui->addButton(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_items()));
+		$ui->addButton(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_remove()));
 		$player->sendForm($ui);
 	}
 
@@ -275,14 +279,14 @@ class KitManager
 			$kit->setPermission($data[2]);
 			$kit->setDelay($data[3]);
 			$kit->save();
-			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));
+			$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));
 			$this->UIEditKit($player, $kit);
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_name()), $kit->getName(), $kit->getName());
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_image()), $kit->getIconForm()->getPath(), $kit->getIconForm()->getPath());
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_permission()), $kit->getPermission(), $kit->getPermission());
-		$ui->addInput(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()), (string)$kit->getDelay(), (string)$kit->getDelay());
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_name()), $kit->getName(), $kit->getName());
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_image()), $kit->getIconForm()->getPath(), $kit->getIconForm()->getPath());
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_permission()), $kit->getPermission(), $kit->getPermission());
+		$ui->addInput(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::buttons_delay()), (string) $kit->getDelay(), (string) $kit->getDelay());
 
 		$player->sendForm($ui);
 	}
@@ -290,7 +294,7 @@ class KitManager
 	private function GUIEditOrCreateKitItems(Player $player, Kit $kit, bool $edit = false) : void
 	{
 		$chestMenu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST);
-		$chestMenu->setName(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_gui($kit)));
+		$chestMenu->setName(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_gui($kit)));
 		foreach ($kit->getItems() as $item) {
 			$chestMenu->getInventory()->addItem($item);
 		}
@@ -310,7 +314,7 @@ class KitManager
 				return !$item->isNull() && !($item->getNamedTag()->getByte("illegal", 0) || $item->getTypeId() === -BlockTypeIds::BARRIER);
 			}));
 			$kit->save();
-			$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));
+			$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_save_kit($kit)));
 			if ($edit) $this->UIEditKit($player, $kit);
 
 		});
@@ -323,14 +327,14 @@ class KitManager
 		$ui = new ModalForm(function (Player $player, ?bool $data) use ($kit) : void {
 			if ($data === true) {
 				$this->removeKit($kit);
-				$player->sendMessage(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_delete_kit($kit)));
+				$player->sendMessage(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::success_delete_kit($kit)));
 			}
 			$this->UIEditIndex($player);
 		});
-		$ui->setTitle(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
-		$ui->setContent(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::content_remove_kit($kit)));
-		$ui->setButton1(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
-		$ui->setButton2(LanguageManager::getInstance()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
+		$ui->setTitle(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::title_kit_editor_form($kit)));
+		$ui->setContent(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::content_remove_kit($kit)));
+		$ui->setButton1(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::accepted_button()));
+		$ui->setButton2(Main::getInstance()->getLanguageManager()->getTranslateWithTranslatable($player, CustomKnownTranslationFactory::cancel_button()));
 		$player->sendForm($ui);
 	}
 
@@ -344,7 +348,7 @@ class KitManager
 			unlink($configFile);
 		}
 		unset($this->kits[$kit->getId()]);
-		foreach (LanguageManager::getInstance()->getAllLang() as $language) {
+		foreach (Main::getInstance()->getLanguageManager()->getAllLang() as $language) {
 			$config = $language->getConfig();
 			if ($config->getNested($kit->getDescriptionPath()) === null) continue;
 			$config->removeNested($kit->getDescriptionPath());

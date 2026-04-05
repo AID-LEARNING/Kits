@@ -47,20 +47,25 @@ use function str_replace;
 class Main extends PluginBase
 {
 
+	private static Main $instance;
+	private LanguageManager $languageManager;
+	private DataManager $dataManager;
 	protected function onLoad() : void
 	{
+		self::$instance = $this;
 		if (!file_exists(Path::join($this->getDataFolder(), "config.yml"))) {
 			foreach (PathScanner::scanDirectoryGenerator($search = Path::join(dirname(__DIR__,3) , "resources")) as $file){
 				@$this->saveResource(str_replace($search, "", $file));
 			}
 		}
-		new LanguageManager($this);
+		$this->languageManager = new LanguageManager($this);
 		$typeSave = $this->getConfig()->get("type-save");
-		match ($typeSave) {
-			"yaml" => DataManager::getInstance()->setDataSystem(new YAMLSave($this->getDataFolder())),
-			"json" => DataManager::getInstance()->setDataSystem(new JSONSave($this->getDataFolder())),
+		$this->dataManager = new DataManager();
+		$this->dataManager->setDataSystem(match ($typeSave) {
+			"yaml" => new YAMLSave($this->getDataFolder()),
+			"json" => new JSONSave($this->getDataFolder()),
 			default => null
-		};
+		});
 	}
 
 	protected function onEnable() : void
@@ -70,7 +75,7 @@ class Main extends PluginBase
 		if (!InvMenuHandler::isRegistered())
 			InvMenuHandler::register($this);
 		$this->getScheduler()->scheduleTask(new ClosureTask(function () {
-			if (DataManager::getInstance()->getDataSystem() === null)
+			if ($this->dataManager->getDataSystem() === null)
 				$this->getLogger()->alert("no DataSystem selected");
 			new KitManager($this);
 		}));
@@ -78,11 +83,25 @@ class Main extends PluginBase
 		if ($hasMiddleware)
 			MiddlewareManager::getInstance()->addMiddleware(new KitMiddleware());
 		EventLoader::loadEventWithClass($this, new PlayerListener($hasMiddleware));
-		LanguageManager::getInstance()->loadCommands("kits");
+		$this->languageManager->loadCommands("kits");
 		$this->getServer()->getCommandMap()->registerAll("kits", [
 			new KitCommand($this, "kit", "Kits command", ["kits"]),
 			new WaitingPeriodCommand($this, "kits-wp", "WaitingPeriod command", ["kit-wp"])
 		]);
 	}
 
+	public static function getInstance() : Main
+	{
+		return self::$instance;
+	}
+
+	public function getLanguageManager() : LanguageManager
+	{
+		return $this->languageManager;
+	}
+
+	public function getDataManager() : DataManager
+	{
+		return $this->dataManager;
+	}
 }
